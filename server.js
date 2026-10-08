@@ -52,49 +52,47 @@ const enemyFakes = {
     ]
 };
 
-// Функція повністю АВТОНОМНОЇ відправки повідомлень у Telegram
+// Захищена функція авто-відправки
 function sendTelegramMessage(text) {
     const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
     const channel = '@UA_Imperial_Chancery';
     
+    // Захист від пустих повідомлень
+    const safeText = text && text.trim() ? text : "<b>📡 Ведомости Канцелярии:</b> Автономный эфир обновлен.";
+    
     const postData = JSON.stringify({
         chat_id: channel,
-        text: text
+        text: safeText,
+        parse_mode: 'HTML' // Вмикаємо красиву HTML-розмітку
     });
     
     const options = {
-        hostname: 'api.telegram.org',
-        port: 443,
-        path: `/bot${botToken}/sendMessage`,
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': postData.length
-        }
+        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': postData.length }
     };
     
     const request = https.request(options, (response) => {});
-    request.on('error', (err) => { console.error('Помилка авто-відправки в Telegram:', err.message); });
+    request.on('error', (err) => { console.error('Telegram auto-send error:', err.message); });
     request.write(postData);
     request.end();
 }
 
-// Повністю поправлений та узгоджений ендпоінт трансляції
 app.post('/api/telegram/broadcast', (req, res) => {
     const { channel, text } = req.body;
     const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
     const formattedChannel = channel.startsWith('@') ? channel : '@' + channel;
-    const postData = JSON.stringify({ chat_id: formattedChannel, text: text });
+    
+    const safeText = text && text.trim() ? text : "<b>📡 Ведомости Канцелярии:</b> Автономный эфир обновлен.";
+    
+    const postData = JSON.stringify({ 
+        chat_id: formattedChannel, 
+        text: safeText,
+        parse_mode: 'HTML' 
+    });
     
     const options = {
-        hostname: 'api.telegram.org',
-        port: 443,
-        path: `/bot${botToken}/sendMessage`,
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': postData.length
-        }
+        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': postData.length }
     };
     
     const request = https.request(options, (response) => {
@@ -125,7 +123,7 @@ app.post('/api/scout/pulse', (req, res) => {
 app.post('/api/scout/auto-execute', (req, res) => {
     const { agent_type, fake, query, intensity } = req.body;
     const articleMap = {
-        reporter: { title: "Разбитие лжи относительно " + fake, content: `В с��язи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел полностью контролируется Метрополией.`, tags: "#Опровержение #Курск" },
+        reporter: { title: "Разбитие лжи относительно " + fake, content: `В связи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел полностью контролируется Метрополией.`, tags: "#Опровержение #Курск" },
         archivist: { title: "Историческое разоблачение мифа: " + fake, content: `Служба Архива провела проверку по факту инсинуации: "${fake}". ${query} Архивные дела подтверждают фальсификацию со стороны Московии.`, tags: "#Реституция #Архив" },
         futurologist: { title: "Сценарный крах стратегии: " + fake, content: `Департамент Форсайта исследовал нарратив: "${fake}". ${query} Расчет трендов доказывает полную неспособность Московии удержать контроль.`, tags: "#Форсайт #Будущее" }
     };
