@@ -16,16 +16,17 @@
         .tabs-menu { display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px; }
         .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 8px; font-size: 11px; font-family: 'Orbitron'; cursor: pointer; flex: 1; text-align: center; }
         .tab-btn.active { background: var(--gold); color: #000; font-weight: bold; box-shadow: 0 0 10px var(--gold-glow); }
-        .workspace-content { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; height: 360px; overflow-y: auto; padding: 15px; }
+        .workspace-content { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; height: 320px; overflow-y: auto; padding: 15px; }
         .record-card { background: rgba(255,255,255,0.02); border-left: 3px solid var(--gold); padding: 10px; margin-bottom: 10px; border-radius: 4px; }
         .record-card.scribe-card { border-left-color: var(--imperial-red); }
         .record-card.reporter-card { border-left-color: #39ff14; }
         .record-card.futurist-card { border-left-color: #00f0ff; }
-        .record-meta { display: flex; justify-content: space-between; font-size: 9px; font-family: 'Orbitron'; color: var(--text-muted); margin-bottom: 5px; }
+        .record-meta { display: flex; justify-content: space-between; font-size: 8px; font-family: 'Orbitron'; color: var(--text-muted); margin-bottom: 5px; }
         .record-title { font-size: 13px; font-weight: bold; color: #fff; }
         .record-body { font-size: 11px; line-height: 1.4; margin-top: 5px; }
-        .workspace-form { display: flex; flex-direction: column; gap: 10px; }
-        input, textarea, button { background: #12141c; border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 4px; font-family: inherit; }
+        .record-tags { font-size: 10px; color: var(--gold); font-family: 'Orbitron'; margin-top: 5px; }
+        .workspace-form { display: flex; flex-direction: column; gap: 8px; }
+        input, select, textarea, button { background: #12141c; border: 1px solid var(--border-color); color: #fff; padding: 8px; border-radius: 4px; font-family: inherit; font-size: 12px; }
         button { background: linear-gradient(135deg, #a87e3b, #dfb76c); color: #000; font-weight: bold; font-family: 'Orbitron'; cursor: pointer; border: none; }
         .chat-messages { height: 280px; overflow-y: auto; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); padding: 15px; display: flex; flex-direction: column; gap: 10px; }
         .chat-msg { max-width: 85%; padding: 10px; border-radius: 6px; font-size: 12px; }
@@ -43,31 +44,61 @@
         <div style="display: flex; align-items: center; gap: 15px;">
             <div class="imperial-crest">I</div>
             <div>
-                <h1 style="font-family: 'Cinzel'; font-size: 20px; color: var(--gold);">ІМПЕРСЬКИЙ ПОРТАЛ</h1>
+                <h1 style="font-family: 'Cinzel'; font-size: 20px; color: var(--gold);">ІМПЕРСЬКИЙ ПОРТАЛ КОЛАБОРАЦІЇ</h1>
                 <p style="font-size: 9px; color: var(--imperial-red); font-family: 'Orbitron';">КАНЦЕЛЯРІЯ ✖ ШІ-ІНФЛЮЕНСЕРИ</p>
             </div>
         </div>
-        <div style="font-family: 'Orbitron'; font-size: 12px;">СТАТУС: <span style="color: #39ff14;">СИНХРОНІЗАЦІЯ</span></div>
+        <div style="font-family: 'Orbitron'; font-size: 12px;">СТАТУС: <span style="color: #39ff14;">КОНТЕНТ-ДВИГУН ОНЛАЙН</span></div>
     </header>
 
     <div class="dashboard-container">
+        <!-- LEFT PANEL: CHANCELLERY WORKSPACES WITH DROPDOWNS -->
         <div class="panel">
             <h2 class="panel-title">✍️ Робочі Простори Канцелярії</h2>
             <div class="tabs-menu">
                 <button class="tab-btn active" onclick="switchWorkspace('archivist')">📚 Архів</button>
-                <button class="tab-btn" onclick="switchWorkspace('reporter')">📡 Новини</button>
+                <button class="tab-btn" onclick="switchWorkspace('reporter')">���� Новини</button>
                 <button class="tab-btn" onclick="switchWorkspace('futurist')">🔮 Прогноз</button>
                 <button class="tab-btn" onclick="switchWorkspace('geographer')">🗺️ Географ</button>
                 <button class="tab-btn" onclick="switchWorkspace('scribe')">📜 Писар</button>
             </div>
+            
             <div class="workspace-content" id="workspace-records"></div>
+            
             <div class="workspace-form">
-                <input type="text" id="record-title" placeholder="Заголовок запису...">
-                <textarea id="record-content" placeholder="Дані..." rows="2"></textarea>
-                <button onclick="publishRecord()">Опублікувати</button>
+                <input type="text" id="record-title" placeholder="Тема або заголовок запису...">
+                <textarea id="record-content" placeholder="Текст запису..." rows="2"></textarea>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px;">
+                    <select id="record-region">
+                        <option value="kyiv">🇺🇦 Метрополія (Київ)</option>
+                        <option value="konigsberg">🇩🇪 Пруссія (Кенігсберг)</option>
+                        <option value="kursk">🎯 Курський край</option>
+                        <option value="belgorod">🎯 Бєлгородський край</option>
+                        <option value="moscovia">🏚️ Московія</option>
+                    </select>
+                    <select id="record-epoch">
+                        <option value="EP-TRIP">EP-TRIP (Трипілля)</option>
+                        <option value="EP-RUSH">EP-RUSH (Русь)</option>
+                        <option value="EP-HETM">EP-HETM (Гетманат)</option>
+                        <option value="EP-PROG">EP-PROG (Прогресорство)</option>
+                        <option value="EP-EMPE">EP-EMPE (Імперія)</option>
+                    </select>
+                </div>
+                
+                <select id="record-type">
+                    <option value="Офіційний Указ">📜 Офіційний Указ</option>
+                    <option value="Історична хроніка">📚 Історична хроніка</option>
+                    <option value="Оперативне зведення">📡 Оперативне зведення</option>
+                    <option value="Ідеологічний догмат">⚖️ Ідеологічний догмат</option>
+                    <option value="Стратегічний прогноз">🔮 Стратегічний прогноз</option>
+                </select>
+                
+                <button onclick="publishRecord()">Опублікувати з метаданими</button>
             </div>
         </div>
 
+        <!-- CENTER PANEL: SATELLITE MAP -->
         <div class="panel">
             <h2 class="panel-title">🌌 Супутниковий Атлас (Google Maps)</h2>
             <div class="map-nav">
@@ -85,6 +116,7 @@
             </div>
         </div>
 
+        <!-- RIGHT PANEL: DISPATCH & COORDINATION CHAT -->
         <div class="panel">
             <h2 class="panel-title">🎙️ Ефір та Координація ШІ</h2>
             <div class="chat-messages" id="chat-messages"></div>
@@ -134,7 +166,15 @@
             records.forEach(rec => {
                 const card = document.createElement('div');
                 card.className = `record-card ${currentAgent}-card`;
-                card.innerHTML = `<div class="record-meta"><span>${currentAgent.toUpperCase()}</span><span>STARDATE: ${rec.stardate}</span></div><div class="record-title">${rec.title}</div><div class="record-body">${rec.content}</div>`;
+                card.innerHTML = `
+                    <div class="record-meta">
+                        <span>[${rec.content_type.toUpperCase()}]</span>
+                        <span>STARDATE: ${rec.stardate}</span>
+                    </div>
+                    <div class="record-title">${rec.title}</div>
+                    <div class="record-body">${rec.content}</div>
+                    <div class="record-tags">${rec.hashtags} #Епоха_${rec.epoch_key}</div>
+                `;
                 container.appendChild(card);
             });
         }
@@ -142,10 +182,28 @@
         async function publishRecord() {
             const title = document.getElementById('record-title').value.trim();
             const content = document.getElementById('record-content').value.trim();
+            const region = document.getElementById('record-region').value;
+            const epoch = document.getElementById('record-epoch').value;
+            const type = document.getElementById('record-type').value;
+
             if(!title || !content) return alert('Заповніть поля!');
+
+            // Auto-generating majestic hashtags based on metadata
+            const regionNames = { kyiv: 'Метрополія', konigsberg: 'Пруссія', kursk: 'Курськ', belgorod: 'Бєлгород', moscovia: 'Московія' };
+            const hashtags = `#${regionNames[region]} #${type.replace(/\\s/g, '')} #Імперія`;
+
             const stardate = (8000 + Math.floor(Math.random() * 1000)).toString();
-            await fetch('/api/records', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agent_type: currentAgent, title, content, stardate }) });
-            document.getElementById('record-title').value = ''; document.getElementById('record-content').value = '';
+
+            await fetch('/api/records', { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ 
+                    agent_type: currentAgent, title, content, region_key: region, epoch_key: epoch, hashtags, content_type: type, stardate 
+                }) 
+            });
+
+            document.getElementById('record-title').value = ''; 
+            document.getElementById('record-content').value = '';
             loadRecords();
         }
 

@@ -9,7 +9,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const db = new sqlite3.Database(':memory:', (err) => {
     if (err) console.error(err.message);
-    console.log('Підключено до імперської бази даних.');
+    console.log('Підключено до структурованої бази даних.');
 });
 
 db.serialize(() => {
@@ -18,6 +18,10 @@ db.serialize(() => {
         agent_type TEXT NOT NULL,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
+        region_key TEXT NOT NULL,
+        epoch_key TEXT NOT NULL,
+        hashtags TEXT NOT NULL,
+        content_type TEXT NOT NULL,
         stardate TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
@@ -29,13 +33,14 @@ db.serialize(() => {
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('archivist', 'Битва при Оріоні (Історія)', 'Імперський флот під командуванням адмірала Соло виграв вирішальну битву проти загарбників 300 років тому.', '5420.4')");
-    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('reporter', 'Відкриття шахти на Альфі-9', 'Запущено нову шахту з видобутку чистого титану. Очікується приріст видобутку на 15%.', '8452.1')");
-    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('futurist', 'Прогноз колонізації сектора Х-1', 'Згідно з квантовим моделюванням, сектор Х-1 буде безпечним для заселення протягом наступних 50 років.', '9110.5')");
-    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('geographer', 'Картографування туманності Андромеди', 'Виявлено три нові екзопланети з високим вмістом рідкої води та кисневою атмосферою.', '8451.8')");
-    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('scribe', 'Кодекс Вірності громадянина', 'Вірність Імператору — це найвищий прояв розуму. Сумніви породжують слабкість, слабкість породжує зраду.', '8450.0')");
+    // Стартовий структурований контент Канцелярії
+    db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) VALUES 
+    ('archivist', 'Битва при Оріоні', 'Імперський флот виграв вирішальну битву проти загарбників 300 років тому.', 'kyiv', 'EP-RUSH', '#Оріон #Перемога #Минуле', 'Історична хроніка', '5420.4'),
+    ('reporter', 'Видобуток титану на Альфі-9', 'Запущено нову шахту з видобутку чистого титану. Очікується приріст на 15%.', 'kursk', 'EP-EMPE', '#Титан #Ресурси #Курськ', 'Оперативне зведення', '8452.1'),
+    ('scribe', 'Кодекс Вірності громадянина', 'Вірність Імператору — це найвищий прояв розуму. Сумніви народжують зраду.', 'moscovia', 'EP-PROG', '#Кодекс #Вірність #Догмат', 'Ідеологічний догмат', '8450.0')`);
 });
 
+// API отримання записів
 app.get('/api/records/:agent_type', (req, res) => {
     const { agent_type } = req.params;
     db.all("SELECT * FROM chancellery_records WHERE agent_type = ? ORDER BY id DESC", [agent_type], (err, rows) => {
@@ -44,11 +49,22 @@ app.get('/api/records/:agent_type', (req, res) => {
     });
 });
 
+// API публікації записів з метаданими
 app.post('/api/records', (req, res) => {
-    const { agent_type, title, content, stardate } = req.body;
-    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES (?, ?, ?, ?)", [agent_type, title, content, stardate], function(err) {
+    const { agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate } = req.body;
+    db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
+            [agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ id: this.lastID, agent_type, title, content, stardate });
+        res.json({ id: this.lastID, agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate });
+    });
+});
+
+// API для ШІ-Інфлюенсерів (чистий зведений фід контенту з усього порталу)
+app.get('/api/feed', (req, res) => {
+    db.all("SELECT * FROM chancellery_records ORDER BY id DESC", [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
     });
 });
 
@@ -68,5 +84,5 @@ app.post('/api/chat', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Імперський сервер запущено на порту ${PORT}`);
+    console.log(`Структурований імперський сервер запущено на порту ${PORT}`);
 });
