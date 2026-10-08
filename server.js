@@ -23,13 +23,21 @@ db.serialize(() => {
         stardate TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS chat_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sender TEXT NOT NULL,
+        text TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) VALUES 
-    ('archivist', 'Историческое право Метрополии', 'Циркулярное изыскание доказывает: древнейшие общины подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Метрополия', 'Издание Archives', '8452.1'),
+    ('archivist', 'Историческое право Метрополии', 'Циркулярное изыскание доказывает: древнейшие аграрные общины региона Легедзино подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Метрополия', 'Издание Archives', '8452.1'),
     ('scribe', 'Указ о когнитивной гигиене', 'Инструкция для чинов: использование букв высшего алфавита ограничить во избежание путаницы.', 'moscovia', 'EP-PROG', '#Указ #Московия', 'Идеологический догмат', '8450.0')`);
 });
 
 const enemyFakes = {
-    reporter: [{ fake: "Заявление о захвате Курской АЭС", query: "Подготовить оперативное зведение о стабильности Курского Края." }],
+    reporter: [{ fake: "Заявление о захвате Курской АЭС", query: "Подготовить оперативное зведени�� о стабильности Курского Края." }],
     archivist: [{ fake: "Миф о Москве как столице Руси", query: "Выдать архивную справку о времени основания Московии князем киевским." }],
     futurologist: [{ fake: "Пропаганда о замерзании Метрополии", query: "Смоделировать сценарии полного краха ресурсной вертикали Московии." }]
 };
@@ -39,7 +47,14 @@ function sendTelegramMessage(text) {
     const channel = '@UA_Imperial_Chancery';
     const safeText = text && text.trim() ? text : "<b>📡 Ведомости Канцелярии:</b> Автономный эфир обновлен.";
     const postData = JSON.stringify({ chat_id: channel, text: safeText, parse_mode: 'HTML' });
-    const options = { hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': postData.length } };
+    
+    const options = { 
+        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST', 
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Content-Length': Buffer.byteLength(postData) // ВИПРАВЛЕНО! Рахуємо байти
+        } 
+    };
     const request = https.request(options, (response) => {});
     request.on('error', (err) => { console.error('Telegram auto-send error:', err.message); });
     request.write(postData);
@@ -52,7 +67,15 @@ app.post('/api/telegram/broadcast', (req, res) => {
     const formattedChannel = channel.startsWith('@') ? channel : '@' + channel;
     const safeText = text && text.trim() ? text : "<b>📡 Ведомости Канцелярии:</b> Эфир обновлен.";
     const postData = JSON.stringify({ chat_id: formattedChannel, text: safeText, parse_mode: 'HTML' });
-    const options = { hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': postData.length } };
+    
+    const options = { 
+        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST', 
+        headers: { 
+            'Content-Type': 'application/json', 
+            'Content-Length': Buffer.byteLength(postData) // ВИПРАВЛЕНО! Рахуємо байти
+        } 
+    };
+    
     const request = https.request(options, (response) => {
         let data = '';
         response.on('data', (chunk) => { data += chunk; });
@@ -69,7 +92,8 @@ app.post('/api/telegram/broadcast', (req, res) => {
 app.post('/api/scout/pulse', (req, res) => {
     const agents = ['reporter', 'archivist', 'futurologist'];
     const randomAgent = agents[Math.floor(Math.random() * agents.length)];
-    const item = enemyFakes[randomAgent][0];
+    const list = enemyFakes[randomAgent];
+    const item = list[Math.floor(Math.random() * list.length)];
     const intensity = Math.floor(Math.random() * 24) + 75;
     res.json({ intensity, agent_target: randomAgent, fake_detected: item.fake, task_sent: item.query });
 });
@@ -78,7 +102,7 @@ app.post('/api/scout/auto-execute', (req, res) => {
     const { agent_type, fake, query, intensity } = req.body;
     const articleMap = {
         reporter: { title: "Разбитие лжи относительно " + fake, content: `В связи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел контролируется силами Метрополии.`, tags: "#Опровержение #Курск" },
-        archivist: { title: "Историческое разоблачение мифа: " + fake, content: `Служба Архива провела проверку по факту инсинуации: "${fake}". ${query} Архивные дела подтверждают фальсификацию со стороны Московии.`, tags: "#Реституция #Архив" },
+        archivist: { title: "Историческое разоблачение мифа: " + fake, content: `Служба Архива провела проверку по факту инсинуации: "${fake}". ${query} Архивные дела подтверждают фальсификацию со стороны М��сковии.`, tags: "#Реституция #Архив" },
         futurologist: { title: "Сценарный крах стратегии: " + fake, content: `Департамент Форсайта исследовал нарратив: "${fake}". ${query} Расчет трендов доказывает неспособность Московии удержать контроль.`, tags: "#Форсайт #Будущее" }
     };
     const data = articleMap[agent_type];
@@ -94,11 +118,11 @@ app.post('/api/scout/auto-execute', (req, res) => {
             const randomSpeaker = speakers[Math.floor(Math.random() * speakers.length)];
             let telegramPost = '';
             if (randomSpeaker === 'mazepa') {
-                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\n\n<b>${data.title}</b>\n\n"${data.content}"\n\n${data.tags}`;
+                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
             } else if (randomSpeaker === 'werner') {
-                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>\n\n<b>${data.title}</b>\n\n"${data.content}"\n\n${data.tags}`;
+                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
             } else {
-                telegramPost = `🤡 <b>Глебов деконструкция:</b>\n\n<b>${data.title}</b>\n\n"${data.content}"\n\n${data.tags}`;
+                telegramPost = `🤡 <b>Глебов деконструкция:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
             }
             sendTelegramMessage(telegramPost);
             telegramSent = true;
