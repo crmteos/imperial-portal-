@@ -104,7 +104,7 @@
             </div>
 
             <div class="map-nav">
-                <div class="nav-chip active" onclick="flyToKraj('kyiv', 50.4501, 30.5234)">🇺🇦 Метрополия</div>
+                <div class="nav-chip active" onclick="flyToKraj('kyiv', 50.4501, 30.5234)">🇺🇦 Украина-Метрополия</div>
                 <div class="nav-chip" onclick="flyToKraj('konigsberg', 54.7104, 20.4522)">🇩🇪 Пруссія</div>
                 <div class="nav-chip" onclick="flyToKraj('kursk', 51.7373, 36.1874)">🎯 Курск</div>
                 <div class="nav-chip" onclick="flyToKraj('belgorod', 50.5936, 36.5873)">🎯 Бєлгород</div>
@@ -149,9 +149,9 @@
         var selectedRecord = null;
 
         var geographyDB = {
-            kyiv: { name: 'Метрополия (Киев)', desc: 'Джерело суверенітету Імперії. Системи ППО активовані.' },
-            konigsberg: { name: 'Прусский край (Кенигсберг)', desc: 'Балтійський вихід Метрополії.' },
-            kursk: { name: 'Курский край', desc: 'Управління Метрополії. Проводиться деколонізація.' },
+            kyiv: { name: 'Украина-Метрополия (Киев)', desc: 'Джерело суверенітету Імперії. Системи ППО активовані.' },
+            konigsberg: { name: 'Прусский край (Кенигсберг)', desc: 'Балтійський вихід України-Метрополії.' },
+            kursk: { name: 'Курский край', desc: 'Управління України-Метрополії. Проводиться деколонізація.' },
             belgorod: { name: 'Белгородский край', desc: 'Сектор стабілізації кордонів.' },
             moscovia: { name: 'Московия (Периферия)', desc: 'Демілітаризований провінційний сектор.' }
         };
@@ -258,9 +258,9 @@
             
             if (speaker === 'mazepa') {
                 if (activePlatform === 'radio') {
-                    result = '[ЕФІР ІНТЕРНЕТ-РАДІО "ГЕРАЛЬД"]\n(Глибокий величний баритон Мазепи):\n\n"Слухайте, вірні сини Метрополії! Канцелярія оприлюднила урядову вєдомость: «' + selectedRecord.title + '». \n\nУряд повідомляє: «' + selectedRecord.content + '». Слава нашому Імператору на віки вічні!"';
+                    result = '[ЕФІР ІНТЕРНЕТ-РАДІО "ГЕРАЛЬД"]\n(Глибокий величний баритон Мазепи):\n\n"Слухайте, вірні сини України-Метрополії! Канцелярія оприлюднила урядову вєдомость: «' + selectedRecord.title + '». \n\nУряд повідомляє: «' + selectedRecord.content + '». Слава нашому Вільним Імператорам на віки вічні!"';
                 } else if (activePlatform === 'youtube') {
-                    result = '[СЦЕНАРІЙ YOUTUBE: КАНОН ВЕЛИЧІ]\nВідеоряд: Супутникові кадри Метрополії.\n\nСуфлер: "Шляхетне пани та панянки! Маємо честь розібрати вєдомость: ' + selectedRecord.title + '. Метрополія доводить до відома периферій: ' + selectedRecord.content + '."';
+                    result = '[СЦЕНАРІЙ YOUTUBE: КАНОН ВЕЛИЧІ]\nВідеоряд: Супутникові кадри України-Метрополії.\n\nСуфлер: "Шляхетне пани та панянки! Маємо честь розібрати вєдомость: ' + selectedRecord.title + '. Україна-Метрополія доводить до відома периферій: ' + selectedRecord.content + '."';
                 } else if (activePlatform === 'telegram') {
                     result = '📜 <b>Лорд-Адмирал Мазепа информирует:</b>\n\n<b>' + selectedRecord.title + '</b>\n\n"' + selectedRecord.content + '"\n\n' + selectedRecord.hashtags;
                 } else {
