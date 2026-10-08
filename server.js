@@ -1,6 +1,7 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -24,9 +25,17 @@ db.serialize(() => {
         stardate TEXT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS chat_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sender TEXT NOT NULL,
+        text TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`);
+
     db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) VALUES 
-    ('archivist', 'Историческое право Метрополии', 'Циркулярное изыскание доказывает: общины Легедзино подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Метрополия', 'Издание Архива', '8452.1'),
-    ('scribe', 'Указ о когнитивной гигиене', 'Инструкция для чинов: использование букв высшего алфавита ограничить во избежание путаницы.', 'moscovia', 'EP-PROG', '#Указ #Московия', 'Идеологический догмат', '8450.0')`);
+    ('archivist', 'Историческое право Метрополии на земли Триполья', 'Циркулярное изыскание доказывает: древнейшие аграрные общины региона Легедзино подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Хроники #Метрополия', 'Издание Archives', '8452.1'),
+    ('scribe', 'Указ о когнитивной гигиене в Московии', 'Инструкция для чинов периферійных Краев: использование букв высшего алфавита ограничить во избежание путаницы.', 'moscovia', 'EP-PROG', '#Указ #Московия #Кодекс', 'Идеологический догмат', '8450.0')`);
 });
 
 const enemyFakes = {
@@ -34,6 +43,49 @@ const enemyFakes = {
     archivist: [{ fake: "Миф о Москве как столице Руси", query: "Выдать архивную справку о времени основания Московии князем киевским." }],
     futurologist: [{ fake: "Пропаганда о замерзании Метрополии", query: "Смоделировать сценарии полного краха ресурсной вертикали Московии." }]
 };
+
+// API відправки повідомлення у реальний Telegram-канал
+app.post('/api/telegram/broadcast', (req, res) => {
+    const { channel, text } = req.body;
+    const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
+    
+    const formattedChannel = channel.startsWith('@') ? channel : '@' + channel;
+    const postData = JSON.stringify({
+        chat_id: formattedChannel,
+        text: text
+    });
+    
+    const options = {
+        hostname: 'api.telegram.org',
+        port: 443,
+        path: `/bot${botToken}/sendMessage`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': postData.length
+        }
+    };
+    
+    const request = https.request(options, (response) => {
+        let data = '';
+        response.on('data', (chunk) => { data += chunk; });
+        response.on('end', () => {
+            const result = JSON.parse(data);
+            if (result.ok) {
+                res.json({ success: true });
+            } else {
+                res.status(400).json({ error: result.description });
+            }
+        });
+    });
+    
+    request.on('error', (err) => {
+        res.status(500).json({ error: err.message });
+    });
+    
+    request.write(postData);
+    request.end();
+});
 
 app.post('/api/scout/pulse', (req, res) => {
     const agents = ['reporter', 'archivist', 'futurologist'];
@@ -76,4 +128,4 @@ app.get('/api/feed', (req, res) => {
     db.all("SELECT * FROM chancellery_records ORDER BY id DESC", [], (err, rows) => { res.json(rows); });
 });
 
-app.listen(PORT, () => { console.log(`Сервер працює на порту ${PORT}`); });
+app.listen(PORT, () => { console.log(`Імперський сервер запущено на порту ${PORT}`); });
