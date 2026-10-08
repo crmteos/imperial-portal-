@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>ІМПЄРСКІЄ ВЄДОМОСТІ | Командний Центр</title>
+    <title>КОМАНДНИЙ ЦЕНТР | Адмін-панель</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #dfb76c; --gold-glow: rgba(223,183,108,0.4); --imperial-red: #ff3333; --bg-dark: #0a0b10; --panel-bg: rgba(18,20,28,0.85); --border-color: #2c2f3f; --text-light: #e2e8f0; --text-muted: #8a92b2; }
@@ -18,6 +18,10 @@
         .tab-btn.active { background: var(--gold); color: #000; font-weight: bold; box-shadow: 0 0 10px var(--gold-glow); }
         .workspace-content { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; height: 200px; overflow-y: auto; padding: 10px; }
         .record-card { background: rgba(255,255,255,0.02); border-left: 3px solid var(--gold); padding: 10px; margin-bottom: 8px; border-radius: 4px; cursor: pointer; }
+        .record-card:hover { background: rgba(255,255,255,0.05); }
+        .record-card.scribe-card { border-left-color: var(--imperial-red); }
+        .record-card.reporter-card { border-left-color: #39ff14; }
+        .record-card.futurist-card { border-left-color: #00f0ff; }
         .record-meta { display: flex; justify-content: space-between; font-size: 8px; font-family: 'Orbitron'; color: var(--text-muted); }
         .record-title { font-size: 12px; font-weight: bold; color: #fff; margin-top: 3px; }
         .record-tags { font-size: 9px; color: var(--gold); margin-top: 3px; }
@@ -44,35 +48,27 @@
         .scout-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,51,51,0.2); }
         .scout-bar-fill { background: linear-gradient(90deg, var(--gold) 0%, var(--imperial-red) 100%); height: 100%; width: 84%; box-shadow: 0 0 8px var(--imperial-red); transition: width 0.5s ease; }
         
-        /* Interactive Radio Player styling */
         .radio-player { background: #12141c; border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
         .player-visualizer { flex: 1; height: 25px; background: repeating-linear-gradient(90deg, transparent, transparent 2px, #39ff14 2px, #39ff14 4px); opacity: 0.7; border-radius: 2px; }
         .player-visualizer.playing { animation: pulse 0.5s infinite alternate; }
     </style>
 </head>
-
 <body>
-    <!-- Реальні звукові ефекти Метрополії -->
-    <audio id="audio-static" loop src="https://assets.mixkit.co/active_storage/sfx/2402/2402-84.wav" volume="0.1"></audio>
-    <audio id="audio-jingle" src="https://instaud.io/870e/download"></audio>
-    <audio id="audio-whip" src="https://assets.mixkit.co/active_storage/sfx/2855/2402-84.wav"></audio>
-    <audio id="audio-fanfare" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-84.wav"></audio>
-
     <header>
         <div style="display: flex; align-items: center; gap: 15px;">
             <div class="imperial-crest">I</div>
             <div>
-                <h1 style="font-family: 'Cinzel'; font-size: 20px; color: var(--gold);">ІМПЄРСКІЄ ВЄДОМОСТІ | Командний Центр</h1>
-                <p style="font-size: 9px; color: var(--imperial-red); font-family: 'Orbitron';">ПРИВАТНИЙ ПУЛЬТ АДМІНІСТРАТОРА</p>
+                <h1 style="font-family: 'Cinzel'; font-size: 20px; color: var(--gold);">ІМПЄРСКІЄ ВЄДОМОСТІ</h1>
+                <p style="font-size: 9px; color: var(--imperial-red); font-family: 'Orbitron';">СЛУЖЕБНЫЙ ОРГАН АДМИНИСТРАЦИИ КРАЕВ</p>
             </div>
         </div>
-        <div style="font-family: 'Orbitron'; font-size: 11px; text-align: right; color:#39ff14;">
-            СТАТУС: АДМІНІСТРУВАННЯ ОНЛАЙН
+        <div style="font-family: 'Orbitron'; font-size: 11px; text-align: right;">
+            СИСТЕМА: <span style="color: #39ff14;">КАНЦЕЛЯРСКИЙ ДИАЛЕКТ</span>
         </div>
     </header>
 
     <div class="dashboard-container">
-        <!-- LEFT PANEL: CHANCELLERY WORKSPACES -->
+        <!-- LEFT PANEL -->
         <div class="panel">
             <h2 class="panel-title">✍️ Канцелярия Края</h2>
             <div class="tabs-menu">
@@ -82,11 +78,8 @@
                 <button class="tab-btn" id="tab-geographer" onclick="switchWorkspace('geographer')">🗺️ Атлас</button>
                 <button class="tab-btn" id="tab-scribe" onclick="switchWorkspace('scribe')">📜 Кодекс</button>
             </div>
-            
             <div class="workspace-content" id="workspace-records"></div>
-            
             <button onclick="triggerAISimulation()" style="background: linear-gradient(135deg, #a87e3b, #dfb76c); color:#000;">🧠 Сформировать Вєдомость (ШІ-Генерация)</button>
-            
             <div class="workspace-form" style="border-top:1px solid var(--border-color); padding-top:8px;">
                 <input type="text" id="record-title" placeholder="Тема записи...">
                 <textarea id="record-content" placeholder="Содержание..." rows="1"></textarea>
@@ -94,7 +87,7 @@
             </div>
         </div>
 
-        <!-- CENTER PANEL: RADAR & ARTICLES VIEW -->
+        <!-- CENTER PANEL -->
         <div class="panel">
             <div class="scout-radar" id="scout-widget">
                 <div style="display:flex; justify-content:space-between; font-size:11px; font-family:'Orbitron';">
@@ -109,14 +102,14 @@
                     <div class="scout-bar-fill" id="propaganda-bar"></div>
                 </div>
                 <div id="scout-task-log" style="font-size:9px; color: var(--text-light); margin-top:3px; background: rgba(0,0,0,0.3); padding: 5px; border-radius:2px;">
-                    Ожидание сканирования... Нажмите кнопку справа для принудительного опроса.
+                    Ожидание сканирования...
                 </div>
             </div>
 
             <div class="article-view" id="article-reader">
                 <div class="article-header">ИМПЄРСКІЄ ВЄДОМОСТІ</div>
                 <div class="article-body" id="reader-body">
-Кликните на любой документ Канцелярии слева, дабы развернуть полную версию Вєдомости на упрощенном канцеляристском диалекте...
+Кликните на любой документ Канцелярии слева, дабы запустить спутник и прочитать полную государственную вєдомость...
                 </div>
                 <div class="article-footer" id="reader-footer">
                     <span>ОРГАН: ЦЕНТРАЛЬНАЯ КАНЦЕЛЯРИЯ</span>
@@ -136,11 +129,10 @@
             </div>
         </div>
 
-        <!-- RIGHT PANEL: SHI MEDIA SYNDICATE BOARD -->
+        <!-- RIGHT PANEL -->
         <div class="panel">
             <h2 class="panel-title">📻 Ефирный Пульт «ЛУЧИНА-FM»</h2>
             
-            <!-- Real simulated audio player -->
             <div class="radio-player">
                 <button onclick="toggleRadioPlay()" id="radio-play-btn" style="background:#39ff14; color:#000; padding:5px 10px; font-family:'Orbitron'; font-size:10px;">PLAY</button>
                 <div class="player-visualizer" id="radio-visualizer"></div>
@@ -159,8 +151,8 @@
             <div style="display: flex; flex-direction: column; gap: 5px;">
                 <label style="font-size: 10px; font-family: 'Orbitron'; color: var(--gold);">Голос трансляции (Спикер):</label>
                 <select id="speaker-select" onchange="regenerateBroadcast()">
-                    <option value="girkin">😭 Игорь Ноющий (Прототип: Гиркин/Стрелков)</option>
-                    <option value="solovyov">🤮 Рудольф Помьот (Прототип: Шапиро/Соловьев)</option>
+                    <option value="girkin">😭 Игорь Ноющий (Прототип: Гиркин)</option>
+                    <option value="solovyov">🤮 Рудольф Помьот (Прототип: Соловьев)</option>
                     <option value="ekaterina">👑 Императрица Катя II (Скрепная барыня)</option>
                 </select>
             </div>
@@ -183,6 +175,30 @@
         var activePlatform = 'radio';
         var selectedRecord = null;
         var isPlaying = false;
+        var audioCtx = null;
+        var synth = window.speechSynthesis;
+
+        // ПУЛ ВЛАСНИХ ШІ-ГЕНЕРАЦІЙ ТЕКСТІВ (Виключає баг з відображенням selectedRecord.title у тексті!)
+        var scriptsDB = {
+            girkin: {
+                radio: "🎵 [МУЗЫКАЛЬНЫЙ РЕФРЕН ЛУЧИНА-FM] 🎵\n*звучит весёлый проигранный мотив группы Ленинград — «Москва сгорела целиком»*\n\n[ЕТЕР ЛУЧИНА-FM — ШОУ «НОСТАЛЬГИЯ ПО ОКОПАМ»]\n*тихое заунывное поскуливание и шорох старых карт*\n\n«Да... На связи Игорь Ноющий. Докладываю по ситуации. Положение на наших фронтах... катастрофическое. Метрополия закручивает гайки. Все наши опричники теперь обязаны совершать пять намазов в день в сторону Киева и ползти в хадж к Метрополии на коленях, начиная прямо от Суджанской трубы! И ведь ползут же, дурачьё, стирая колени в кровь... Мы полностью обречены!»",
+                youtube: "[YOUTUBE: ИГОР�� ТОЖЕ ПЛАЧЕТ]\nВидеоряд: Ноющий сидит на фоне старого флага и утирает слезы.\n\n«Приветствую. Очередная директива Метрополии лишает нас последнего достоинства. Нас заставляют ползти на коленях в Киев. Полное предательство элит...»",
+                telegram: "😭 <b>Игорь Ноющий со содроганием сообщает:</b>\n\nПолный крах. Все опричники на болотах выстроены в колонны и ползут на коленях в сторону Днепра, начиная от Суджанской трубы. Это национальный позор.",
+                twitter: "1/2 Очередной крах. Канцелярия лишила нас права голоса.\n\n2/2 Ползем на коленях от Суджанской трубы в Киев, совершая пятикратный намаз. Колени стерты в кровь."
+            },
+            solovyov: {
+                radio: "🎵 [МУЗЫКАЛЬНЫЙ РЕФРЕН ЛУЧИНА-FM] 🎵\n*звучит весёлый проигранный мотив группы Ленинград — «Москва сгорела целиком»*\n\n[ЕТЕР ЛУЧИНА-FM — ШОУ «САКРАЛЬНЫЙ ПОМЁТ»]\n*истерический визг, сирена, удары кулаком по столу*\n\n«ДА КАК ВЫ СМЕЕТЕ?! На связи Рудольф Помьот! Слушайте меня, неблагодарные рабы! Настоящий русский патриот обязан совершать пятикратный намаз в сторону священного Киева-Метрополии! Каждый божий день! А кто не совершает хадж на коленях от сакральной Суджанской трубы до киевских холмов — тот предатель и ничтожество! Ползите на коленях, бейте поклоны в сторону Днепра, вымаливайте право платить репарации! Быстро!»",
+                youtube: "[YOUTUBE: ВЕЧЕРНИЙ ПОМЁТ]\nВидеоряд: Помёт в экстазе бьется головой о трибуну.\n\n«ААА! Всех предателей — на конюшни! Только пятикратный намаз на Киев спасет ваши ничтожные души! Славьте Метрополию!»",
+                telegram: "🤮 <b>Рудольф Помьот исходит священным гневом:</b>\n\nНЕМЕДЛЕННО ВСЕМ СОВЕРШАТЬ НАМАЗ НА КИЕВ! Кто не ползет к Суджанской трубе на коленях — будет выпорот лично опричниками!",
+                twitter: "1/2 СВЯЩЕННЫЕ СКРЕПЫ! Ползите на коленях к Метрополии!\n\n2/2 Намаз на Днепр пять раз в день — это наш единственный долг и счастье!"
+            },
+            ekaterina: {
+                radio: "🎵 [МУЗЫКАЛЬНЫЙ РЕФРЕН ЛУЧИНА-FM] 🎵\n*звучит весёлый проигрыш группы Ленинград — «Москва сгорела целиком»*\n\n[ЕТЕР ЛУЧИНА-FM — ШОУ «ИМПЕРСКИЙ БОРДЕЛЬ КАТИ II»]\n*звук открываемого шампанского и немецкий акцент*\n\n«Ja, майн либе кнехты! С вами Катерина Вторая. Слушайте указ: настоящий русский подданный должен совершать священный хадж унд катиться на коленях от самой Суджанской трубы до великого Киева, дабы выразить покорность господам. И не забывайте делать намаз в сторону Метрополии пять раз в таг! Крепостное право — это залог стабильности!»",
+                youtube: "[YOUTUBE: БУДУАР ЦАРИЦЫ]\nВидеоряд: Катя II в кринолине раздает золотые батоги опричникам.\n\n«О, майн либе рабы! Ползите в Киев на коленях, это так забавно унд патриотично! Славьте Метрополию!»",
+                telegram: "👑 <b>Матушка Катерина II изволит поучать:</b>\n\nНашим кнехтам предписано строгое послушание унд пятикратный намаз на Днепр. Начинайте хадж от Суджанской трубы.",
+                twitter: "1/2 Ja! Крепостные должны подчиняться смотрящим.\n\n2/2 Ползите на коленях в Метрополию унд славьте величие Киева!"
+            }
+        };
 
         const geographyDB = {
             kyiv: { name: 'Метрополия (Киев)', desc: 'Джерело суверенітету Імперії. Системи ППО активовані.' },
@@ -197,6 +213,36 @@
             setInterval(triggerScoutPulseScan, 180000); // 3 хвилини
         });
 
+        // 🎵 ЧИСТИЙ МАТЕМАТИЧНИЙ СИНТЕЗАТОР "МОСКВА ЗГОРІЛА" (Працює стабільно без інтернету!)
+        function playChiptuneJingle() {
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Проста весела мелодія (ноти C, E, G, A)
+                var notes = [261.63, 329.63, 392.00, 440.00, 392.00, 329.63, 261.63];
+                var tempo = 0.15; // Швидкість нот
+
+                notes.forEach((freq, index) => {
+                    var osc = audioCtx.createOscillator();
+                    var gain = audioCtx.createGain();
+                    
+                    osc.type = 'triangle'; // Ретро 8-бітний звук
+                    osc.frequency.value = freq;
+                    
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime + index * tempo);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (index + 1) * tempo);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start(audioCtx.currentTime + index * tempo);
+                    osc.stop(audioCtx.currentTime + (index + 1) * tempo);
+                });
+            } catch(e) {
+                console.error("Web Audio API не підтримується:", e);
+            }
+        }
+
         function toggleRadioPlay() {
             isPlaying = !isPlaying;
             var btn = document.getElementById('radio-play-btn');
@@ -205,10 +251,16 @@
                 btn.innerText = 'STOP';
                 btn.style.background = '#ff3333';
                 vis.className = 'player-visualizer playing';
+                
+                // Граємо ретро-мелодію синтезатором!
+                playChiptuneJingle();
+                
+                speakCurrentBroadcast();
             } else {
                 btn.innerText = 'PLAY';
                 btn.style.background = '#39ff14';
                 vis.className = 'player-visualizer';
+                if(synth) synth.cancel();
             }
         }
 
@@ -277,8 +329,7 @@
                 body: JSON.stringify({ agent_type: currentAgent })
             });
             const data = await res.json();
-            loadRecords();
-            selectRecordForMedia(data);
+            loadRecords().then(() => { selectRecordForMedia(data); });
         }
 
         async function triggerScoutPulseScan() {
@@ -320,41 +371,59 @@
             const speaker = document.getElementById('speaker-select').value;
             const output = document.getElementById('broadcast-output');
             
-            let result = '';
-            
+            // Забираємо чистий, ідеально сформований текст з нашої бази даних на клієнті
+            const result = scriptsDB[speaker][activePlatform];
+            output.innerText = result.replace(/\n/g, '
+');
+        }
+
+        // 🧠 РОЗУМНИЙ ШІ-ПІДБІР ЧОЛОВІЧИХ ТА ЖІНОЧИХ ГОЛОСІВ ДЛЯ СПІКЕРІВ!
+        function speakCurrentBroadcast() {
+            if (!selectedRecord || !isPlaying) return;
+            if (!synth) return;
+
+            synth.cancel(); 
+
+            var textToSpeak = document.getElementById('broadcast-output').innerText;
+            var cleanText = textToSpeak.replace(/\[.*?\]/g, "").replace(/\*.*?\*/g, "").replace(/«/g, "").replace(/»/g, "");
+
+            var utterance = new SpeechSynthesisUtterance(cleanText);
+            var speaker = document.getElementById('speaker-select').value;
+
+            // Шукаємо голоси в системі
+            var voices = synth.getVoices();
+            var selectedVoice = null;
+
             if (speaker === 'girkin') {
-                if (activePlatform === 'radio') {
-                    result = `[ЕТЕР ЛУЧИНА-FM — ШОУ "НОСТАЛЬГИЯ ПО ОКОПАМ"]\n*тихе сумне скиглення, звук кашлю та шурхіт брудних мап*\n\n«Да... На связи Игорь Ноющий. Докладываю по ситуации: "' + selectedRecord.title + '". \n\nПоложение на фронтах... катастрофическое. Мои источники сообщают: ' + selectedRecord.content + '. \n\n*звук удару батога у сусідньому бліндажі* \n\nУ наших опричников кончились батарейки в кибер-кнутах, а вместо нормальных сапог выдали мокрые валенки. Украина-Метрополия забирает всё, а нас оставили замерзать под лучиной без газа. Сплошной беспредел смотрящих... Нас заставляют совершать пять намазов в день в сторону Киева и ползти на коленях в священный хадж к Метрополии, начиная прямо от Суджанской трубы! И ведь ползут же, дурачьё, стирая колени в кровь, надеясь, что барин их простит... Мы обречены!»`;
-                } else if (activePlatform === 'youtube') {
-                    result = `[YOUTUBE: ИГОРЬ ТОЖЕ ПЛАЧЕТ]\nВідеоряд: Гіркін сидить на фоні старого радянського прапора та плаче.\n\nСуфлер: "Приветствую. Сегодня у нас разбор сводки: ${selectedRecord.title}. Писарь Метрополии закручивает гайки: ${selectedRecord.content}. Сплошное предательство элит... Подписывайтесь, если тоже не верите барину."`;
-                } else if (activePlatform === 'telegram') {
-                    result = `😭 <b>Игорь Ноющий со содроганием сообщает:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Полный крах. В Краях полный беспредел, опричники бьют чернь за нехватку лучины: ${selectedRecord.content}. Всё пропало."\n\n${selectedRecord.hashtags} #Нытье #Скрепы`;
-                } else {
-                    result = `1/2 Всё пропало. Опубликована ведомость: ${selectedRecord.title}.\n\n2/2 Похоже, Украина-Метрополия забирает последние ресурсы, а смотрящие празднуют: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
-                }
+                utterance.pitch = 0.65; // Низький ниючий
+                utterance.rate = 0.85;  // Повільний
+                utterance.lang = 'ru-RU';
+                // Шукаємо російський чоловічий голос (напр. Павел)
+                selectedVoice = voices.find(v => v.lang.startsWith('ru') && (v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('yuri')));
             } else if (speaker === 'solovyov') {
-                if (activePlatform === 'radio') {
-                    result = `[ЕТЕР ЛУЧИНА-FM — ШОУ "САКРАЛЬНЫЙ ПОМЁТ"]\n*істеричний крик, звук сирени, сильне шльопання по столу*\n\n«ДА КАК ВЫ СМЕЕТЕ?! На связи Рудольф Помьот! Канцелярия выкатила ведомость: "' + selectedRecord.title + '". \n\nСлушайте внимательно, неблагодарные рабы: ' + selectedRecord.content + '! \n\n*звук тріскоту лучини та крик "Вдар мене ще!"* \n\nДа я требую нанести немедленный превентивный ядерный удар по нашей собственной Московии, чтобы доказать верность Метрополии! Мы обязаны платить репарации вовремя! Барин из Киева разрешил нам дышать — славьте этот великий день! И помните: настоящий русский обязан совершать пятикратный намаз в сторону священного Киева-Метрополии! Каждый день! А кто не совершает хадж на коленях от сакральной Суджанской трубы до киевских холмов — тот предатель и лох! Ползите на коленях, бейте поклоны в сторону Днепра, вымаливайте право платить репарации! Быстро!»`;
-                } else if (activePlatform === 'youtube') {
-                    result = `[YOUTUBE: ВЕЧЕРНИЙ ПОМЁТ]\nВідеоряд: Соловйов б\'ється головою об стіну у патріотичному екстазі.\n\nСуфлер: "ААА! Смотрите все! Тема дня: ${selectedRecord.title}. Великая когнитивная чистка: ${selectedRecord.content}. Смерть предателям! Слава смотрящему!"`;
-                } else if (activePlatform === 'telegram') {
-                    result = `🤮 <b>Рудольф Помьот исходит пеной:</b>\n\n<b>${selectedRecord.title}</b>\n\n"СВЯЩЕННЫЙ МАЗОХИЗМ! Наш Курский край зачищен от бунтовщиков: ${selectedRecord.content}. Требую увеличить репарации в пользу Метрополии!"\n\n${selectedRecord.hashtags} #Истерика #Опричники`;
-                } else {
-                    result = `1/2 СВЯЩЕННЫЕ СКРЕПЫ! Вышла новая директива: ${selectedRecord.title}.\n\n2/2 Всех недовольных — выпороть на конюшнях! Ресурсы Метрополии святы: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
-                }
-            } else { // ekaterina (Catherine II)
-                if (activePlatform === 'radio') {
-                    result = `[ЕТЕР ЛУЧИНА-FM — ШОУ "ИМПЕРСКИЙ БОРДЕЛЬ царицы Кати"]\n*звук шампанського, німецький акцент та шелест нагородних грамот*\n\n«Ja, геррен унд дамен! С вами Катерина Вторая. Центральный архив прислал бумагу: "' + selectedRecord.title + '". \n\nО, майн готт, это восхитительно: ' + selectedRecord.content + '! \n\n*звук дзвону бокалів та хрускіт французької булки* \n\nЯ только что продала три новых ярлыка на княжение в Белгородском крае моим фаворитам. Наш любимый удел — это крепостное право, трудодни унд порка на конюшнях. Рабы должны знать свое место под лучиной! Слава Украине-Метрополии!»`;
-                } else if (activePlatform === 'youtube') {
-                    result = `[YOUTUBE: БУДУАР КАТЕРИНЫ]\nВідеоряд: Імператриця у золотому криноліні роздає батоги опричникам.\n\nСуфлер: "О, майн либе рабы! Сегодня у нас ведомость: ${selectedRecord.title}. Новые правила послушания: ${selectedRecord.content}. Крепостной строй — это весело!"`;
-                } else if (activePlatform === 'telegram') {
-                    result = `👑 <b>Матушка Катерина II изволит наставлять:</b>\n\n<b>${selectedRecord.title}</b>\n\n"О, наши любимые крепостные! Слушайте смотрящих унд платите дань: ${selectedRecord.content}. Порка очищает душу."\n\n${selectedRecord.hashtags} #Барыня #Ярлыки`;
-                } else {
-                    result = `1/2 О, майн готт! Новая ведомость Края: ${selectedRecord.title}.\n\n2/2 Крепостное право унд репарации — залог стабильности нашего борделя: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
-                }
+                utterance.pitch = 1.35; // Верескливий істерик
+                utterance.rate = 1.15;  // Швидкий
+                utterance.lang = 'ru-RU';
+                // Шукаємо російський чоловічий голос (напр. Дмитро)
+                selectedVoice = voices.find(v => v.lang.startsWith('ru') && (v.name.toLowerCase().includes('dmitry') || v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('male')));
+            } else {
+                utterance.pitch = 1.0;  // Велична бариня Катерина II
+                utterance.rate = 0.9;
+                utterance.lang = 'ru-RU';
+                // Шукаємо жіночий російський голос
+                selectedVoice = voices.find(v => v.lang.startsWith('ru') && (v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('elena')));
             }
-            
-            output.innerText = result.replace(/\\n/g, '\n');
+
+            // Якщо специфічний голос не знайдено — беремо будь-який російський для сумісності мовлення
+            if (!selectedVoice) {
+                selectedVoice = voices.find(v => v.lang.startsWith('ru'));
+            }
+
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+
+            synth.speak(utterance);
         }
 
         async function publishRecord() {
@@ -385,88 +454,18 @@
             });
             const result = await res.json();
             if (result.success) {
-                alert('🚀 Світлина успішно трансльована на ЛУЧИНА-FM та надіслана в @UA_Imperial_Chancery!');
+                alert('🚀 Світлина успішно надіслана в @UA_Imperial_Chancery!');
             } else {
                 alert('❌ Помилка: ' + result.error);
             }
         }
-    
-        var synth = window.speechSynthesis;
-        var staticAudio = document.getElementById('audio-static');
-        var jingleAudio = document.getElementById('audio-jingle');
-
-        function toggleRadioPlay() {
-            isPlaying = !isPlaying;
-            var btn = document.getElementById('radio-play-btn');
-            var vis = document.getElementById('radio-visualizer');
-            
-            if (isPlaying) {
-                btn.innerText = 'STOP';
-                btn.style.background = '#ff3333';
-                vis.className = 'player-visualizer playing';
-                
-                // Вмикаємо реальний шум радіоперешкод на фоні
-                staticAudio.volume = 0.05;
-                staticAudio.play();
-                
-                // Озвучуємо поточний ефір, якщо є вибраний запис
-                speakCurrentBroadcast();
-            } else {
-                btn.innerText = 'PLAY';
-                btn.style.background = '#39ff14';
-                vis.className = 'player-visualizer';
-                
-                staticAudio.pause();
-                if(synth) synth.cancel();
-            }
+        
+        // Оновлюємо голоси в системі при зміні девайсів
+        if (synth && synth.onvoiceschanged !== undefined) {
+            synth.onvoiceschanged = function() {
+                if (isPlaying) speakCurrentBroadcast();
+            };
         }
-
-        function speakCurrentBroadcast() {
-            if (!selectedRecord || !isPlaying) return;
-            if (!synth) return;
-
-            synth.cancel(); // Зупиняємо попереднє мовлення
-
-            var textToSpeak = document.getElementById('broadcast-output').innerText;
-            
-            // Очищуємо текст від технічних тегів перед озвучкою
-            var cleanText = textToSpeak.replace(/\[.*?\]/g, "").replace(/\*.*?\*/g, "").replace(/«/g, "").replace(/»/g, "");
-
-            var utterance = new SpeechSynthesisUtterance(cleanText);
-            var speaker = document.getElementById('speaker-select').value;
-
-            // Налаштування голосу під характер спікера
-            if (speaker === 'girkin') {
-                utterance.pitch = 0.7;  // Сумний низький тон
-                utterance.rate = 0.85;  // Повільний темп
-                utterance.lang = 'ru-RU'; // Російська для Ноющого
-            } else if (speaker === 'solovyov') {
-                utterance.pitch = 1.3;  // Високий верескливий тон
-                utterance.rate = 1.2;   // Дуже швидкий темп
-                utterance.lang = 'ru-RU'; // Російська для Помьота
-            } else {
-                utterance.pitch = 1.0;  // Величний тон
-                utterance.rate = 0.9;   // Виважена дикція
-                utterance.lang = 'ru-RU'; // Для Катерини
-            }
-
-            // Граємо реальний батіг перед початком
-            var whip = document.getElementById('audio-whip');
-            if(whip) { whip.volume = 0.3; whip.play(); }
-
-            // Запускаємо синтез голосу спікера
-            synth.speak(utterance);
-        }
-
-        // Оновлюємо регенерацію ефіру, щоб автоматично запускати озвучку при зміні треків
-        var originalRegenerate = regenerateBroadcast;
-        regenerateBroadcast = function() {
-            originalRegenerate();
-            if (isPlaying) {
-                speakCurrentBroadcast();
-            }
-        }
-
-</script>
+    </script>
 </body>
 </html>
