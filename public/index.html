@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>ІМПЄРСКІЄ ВЄДОМОСТІ | Командний Центр</title>
+    <title>ІМПЄРСКІЄ ВЄДОМОСТІ | Читальний Зал</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #dfb76c; --gold-glow: rgba(223,183,108,0.4); --imperial-red: #ff3333; --bg-dark: #0a0b10; --panel-bg: rgba(18,20,28,0.85); --border-color: #2c2f3f; --text-light: #e2e8f0; --text-muted: #8a92b2; }
@@ -10,43 +10,25 @@
         body { background: var(--bg-dark); color: var(--text-light); font-family: 'Montserrat', sans-serif; min-height: 100vh; }
         header { background: linear-gradient(180deg, #0a0b10 0%, #12141c 100%); border-bottom: 2px solid var(--gold); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
         .imperial-crest { width: 45px; height: 45px; background: radial-gradient(circle, var(--gold) 30%, transparent 70%); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 22px; color: #000; font-weight: 900; border: 2px solid var(--gold); }
-        .dashboard-container { max-width: 1650px; margin: 25px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.3fr 1fr; gap: 20px; }
+        .dashboard-container { max-width: 1400px; margin: 25px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; }
         .panel { background: var(--panel-bg); border: 1px solid var(--border-color); border-top: 3px solid var(--gold); border-radius: 6px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
         .panel-title { font-family: 'Orbitron'; font-size: 14px; color: var(--gold); text-transform: uppercase; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
         .tabs-menu { display: flex; flex-wrap: wrap; gap: 5px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px; }
         .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 8px; font-size: 10px; font-family: 'Orbitron'; cursor: pointer; flex: 1; text-align: center; }
         .tab-btn.active { background: var(--gold); color: #000; font-weight: bold; box-shadow: 0 0 10px var(--gold-glow); }
-        .workspace-content { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; height: 200px; overflow-y: auto; padding: 10px; }
+        .workspace-content { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 4px; height: 420px; overflow-y: auto; padding: 10px; }
         .record-card { background: rgba(255,255,255,0.02); border-left: 3px solid var(--gold); padding: 10px; margin-bottom: 8px; border-radius: 4px; cursor: pointer; }
         .record-card:hover { background: rgba(255,255,255,0.05); }
-        .record-card.scribe-card { border-left-color: var(--imperial-red); }
-        .record-card.reporter-card { border-left-color: #39ff14; }
-        .record-card.futurist-card { border-left-color: #00f0ff; }
         .record-meta { display: flex; justify-content: space-between; font-size: 8px; font-family: 'Orbitron'; color: var(--text-muted); }
         .record-title { font-size: 12px; font-weight: bold; color: #fff; margin-top: 3px; }
         .record-tags { font-size: 9px; color: var(--gold); margin-top: 3px; }
-        .workspace-form { display: flex; flex-direction: column; gap: 5px; }
-        input, select, textarea, button { background: #12141c; border: 1px solid var(--border-color); color: #fff; padding: 6px; border-radius: 4px; font-family: inherit; font-size: 11px; }
-        button { background: linear-gradient(135deg, #a87e3b, #dfb76c); color: #000; font-weight: bold; font-family: 'Orbitron'; cursor: pointer; border: none; }
         
-        .article-view { background: #10121a; border: 2px solid #252836; border-radius: 4px; padding: 15px; height: 240px; overflow-y: auto; position: relative; }
+        .article-view { background: #10121a; border: 2px solid #252836; border-radius: 4px; padding: 15px; height: 260px; overflow-y: auto; position: relative; }
         .article-header { font-family: 'Cinzel'; font-size: 18px; color: var(--gold); text-align: center; border-bottom: 2px double var(--gold); padding-bottom: 8px; margin-bottom: 10px; letter-spacing: 1px; }
-        .article-body { font-size: 11px; color: var(--text-light); line-height: 1.5; white-space: pre-wrap; font-style: italic; }
+        .article-body { font-size: 12px; color: var(--text-light); line-height: 1.5; white-space: pre-wrap; font-style: italic; }
         .article-footer { display: flex; justify-content: space-between; font-family: 'Orbitron'; font-size: 9px; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 15px; }
         
-        .map-container { height: 160px; background: #000; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
-        .map-nav { display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 5px; }
-        .nav-chip { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-light); padding: 3px 8px; font-size: 9px; border-radius: 20px; cursor: pointer; font-family: 'Orbitron'; }
-        .nav-chip.active { background: var(--gold); color: #000; font-weight: bold; }
-        
-        .media-btn-group { display: flex; gap: 5px; margin-bottom: 8px; }
-        .media-tab { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px; font-size: 10px; font-family: 'Orbitron'; flex: 1; text-align: center; cursor: pointer; border-radius: 4px; }
-        .media-tab.active { background: var(--imperial-red); color: #fff; border-color: var(--imperial-red); box-shadow: 0 0 10px rgba(255,51,51,0.3); }
-        .script-box { background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 4px; padding: 12px; height: 180px; overflow-y: auto; font-size: 11px; font-family: 'Courier New', monospace; color: #39ff14; line-height: 1.4; white-space: pre-wrap; }
-        
-        .scout-radar { background: rgba(255,51,51,0.05); border: 1px solid var(--imperial-red); border-radius: 4px; padding: 10px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px; }
-        .scout-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid rgba(255,51,51,0.2); }
-        .scout-bar-fill { background: linear-gradient(90deg, var(--gold) 0%, var(--imperial-red) 100%); height: 100%; width: 84%; box-shadow: 0 0 8px var(--imperial-red); transition: width 0.5s ease; }
+        .map-container { height: 200px; background: #000; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -58,16 +40,15 @@
                 <p style="font-size: 9px; color: var(--imperial-red); font-family: 'Orbitron';">СЛУЖЕБНЫЙ ОРГАН АДМИНИСТРАЦИИ КРАЕВ</p>
             </div>
         </div>
-        <div style="font-family: 'Orbitron'; font-size: 11px; text-align: right;">
-            СИСТЕМА: <span style="color: #39ff14;">СЛУЖЕБНЫЙ КАНЦЕЛЯРСКИЙ ДИАЛЕКТ</span><br>
-            <span style="color: var(--text-muted); font-size:9px;">(буква "І" изъята для упрощения умов периферии)</span>
+        <div style="font-family: 'Orbitron'; font-size: 11px; text-align: right; color: var(--text-muted);">
+            ОФИЦИАЛЬНЫЙ ПОРТАЛ ВЕЩАНИЯ МЕТРОПОЛИИ
         </div>
     </header>
 
     <div class="dashboard-container">
-        <!-- LEFT PANEL: CHANCELLERY WORKSPACES -->
+        <!-- LEFT PANEL: PUBLIC CHANCELLERY WORKSPACES -->
         <div class="panel">
-            <h2 class="panel-title">✍️ Канцелярия Края</h2>
+            <h2 class="panel-title">📚 Разделы Ведомостей</h2>
             <div class="tabs-menu">
                 <button class="tab-btn active" id="tab-archivist" onclick="switchWorkspace('archivist')">📚 Архів</button>
                 <button class="tab-btn" id="tab-reporter" onclick="switchWorkspace('reporter')">📡 Ведомости</button>
@@ -77,39 +58,16 @@
             </div>
             
             <div class="workspace-content" id="workspace-records"></div>
-            
-            <button onclick="triggerAISimulation()" style="background: linear-gradient(135deg, #a87e3b, #dfb76c); color:#000;">🧠 Сформировать Вєдомость (ШІ-Генерация)</button>
-            
-            <div class="workspace-form" style="border-top:1px solid var(--border-color); padding-top:8px;">
-                <input type="text" id="record-title" placeholder="Тема записи...">
-                <textarea id="record-content" placeholder="Содержание..." rows="1"></textarea>
-                <button onclick="publishRecord()" style="font-size:9px;">Опубликовать вручную</button>
-            </div>
         </div>
 
-        <!-- CENTER PANEL: RADAR & ARTICLES VIEW -->
+        <!-- CENTER PANEL: READ ROOM & MAP -->
         <div class="panel">
-            <div class="scout-radar" id="scout-widget">
-                <div style="display:flex; justify-content:space-between; font-size:11px; font-family:'Orbitron';">
-                    <span style="color: var(--imperial-red);">📡 СИСТЕМА КОГНИТИВНОЙ РЛС "СКАУТ"</span>
-                    <span id="scout-pulse-txt" style="color: var(--gold); font-weight:bold;">МОНИТОРИНГ...</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; font-size:11px;">
-                    <span>Накал пропаганды Московии:</span>
-                    <span id="propaganda-lvl" style="font-family:'Orbitron'; color:var(--imperial-red); font-weight:bold;">84%</span>
-                </div>
-                <div class="scout-bar-bg">
-                    <div class="scout-bar-fill" id="propaganda-bar"></div>
-                </div>
-                <div id="scout-task-log" style="font-size:9px; color: var(--text-light); margin-top:3px; background: rgba(0,0,0,0.3); padding: 5px; border-radius:2px;">
-                    Ожидание сканирования... Нажмите кнопку справа для принудительного опроса.
-                </div>
-            </div>
-
+            <h2 class="panel-title">📰 Читальный Зал Ведомостей</h2>
+            
             <div class="article-view" id="article-reader">
                 <div class="article-header">ИМПЄРСКІЄ ВЄДОМОСТІ</div>
                 <div class="article-body" id="reader-body">
-��ликните на любой документ Канцелярии слева, дабы развернуть полную версию Вєдомости на упрощенном канцеляристском диалекте...
+Выберите любой документ из разделов Канцелярии слева, дабы запустить спутник и прочитать полную государственную вєдомость...
                 </div>
                 <div class="article-footer" id="reader-footer">
                     <span>ОРГАН: ЦЕНТРАЛЬНАЯ КАНЦЕЛЯРИЯ</span>
@@ -117,86 +75,45 @@
                 </div>
             </div>
 
-            <div class="map-nav">
-                <div class="nav-chip active" onclick="flyToKraj('kyiv', 50.4501, 30.5234)">🇺🇦 Метрополия</div>
-                <div class="nav-chip" onclick="flyToKraj('konigsberg', 54.7104, 20.4522)">🇩🇪 Пруссія</div>
-                <div class="nav-chip" onclick="flyToKraj('kursk', 51.7373, 36.1874)">🎯 Курск</div>
-                <div class="nav-chip" onclick="flyToKraj('belgorod', 50.5936, 36.5873)">🎯 Бєлгород</div>
-                <div class="nav-chip" onclick="flyToKraj('moscovia', 55.7558, 37.6173)">🏚️ Московия</div>
-            </div>
             <div class="map-container">
                 <iframe id="google-map-iframe" width="100%" height="100%" frameborder="0" style="border:0;" src="https://maps.google.com/maps?q=50.4501,30.5234&t=k&z=6&output=embed"></iframe>
             </div>
-        </div>
-
-        <!-- RIGHT PANEL: SHI MEDIA SYNDICATE BOARD -->
-        <div class="panel">
-            <h2 class="panel-title">🎛️ Ефирный Пульт Медиасиндиката</h2>
-            
-            <button onclick="triggerScoutPulseScan()" style="background: linear-gradient(135deg, #ff3333, #dfb76c); color:#000; font-size:11px; margin-bottom:10px;">⚡ ПРИНУДИТЕЛЬНО ОПРОСИТЬ СЕТЬ (Скаут-Скан)</button>
-
-            <div class="media-btn-group">
-                <div class="media-tab active" id="tab-radio" onclick="switchPlatform('radio')">📻 Радио</div>
-                <div class="media-tab" id="tab-youtube" onclick="switchPlatform('youtube')">🎥 YouTube</div>
-                <div class="media-tab" id="tab-telegram" onclick="switchPlatform('telegram')">📱 Telegram</div>
-                <div class="media-tab" id="tab-twitter" onclick="switchPlatform('twitter')">🐦 X-Тред</div>
-            </div>
-
-            <div style="display: flex; flex-direction: column; gap: 5px;">
-                <label style="font-size: 10px; font-family: 'Orbitron'; color: var(--gold);">Голос трансляции (Спикер):</label>
-                <select id="speaker-select" onchange="regenerateBroadcast()">
-                    <option value="mazepa">🎭 Лорд-Адмирал Мазепа (Изящный барочный укр.)</option>
-                    <option value="werner">⚙️ Технократ Вернер (Динамичный техно-укр.)</option>
-                    <option value="glibov">🔥 Дмитрий Глебов (Саркастический суржик-глум)</option>
-                </select>
-            </div>
-
-            <div class="script-box" id="broadcast-output">
-Оберіть Вєдомость ліворуч, щоб розпочати автоматичне перекодування ефіру...
-            </div>
-
-            <div style="background: rgba(57,255,20,0.05); border:1px solid #39ff14; padding:8px; border-radius:4px; font-size:10px; text-align:center; color:#39ff14;">
-                📡 АВТОНОМНЫЙ РЕАКТОР ОНЛАЙН:<br>
-                Пости автоматично транслюються у канал <b>@UA_Imperial_Chancery</b>!
-            </div>
-
-            <button onclick="broadcastToNetwork()" style="background: linear-gradient(135deg, #39ff14, #00f0ff); color:#000; font-weight:bold;">🚀 Принудительный дубль в Telegram</button>
         </div>
     </div>
 
     <script>
         let currentAgent = 'archivist';
-        let activePlatform = 'radio';
-        let selectedRecord = null;
 
-        const geographyDB = {
-            kyiv: { name: 'Метрополия (Киев)', desc: 'Джерело суверенітету Імперії. Системи ППО активовані.' },
-            konigsberg: { name: 'Прусский край (Кенигсберг)', desc: 'Балтійський вихід Метрополії.' },
-            kursk: { name: 'Курский край', desc: 'Управління Метрополії. Проводиться деколонізація.' },
-            belgorod: { name: 'Белгородский край', desc: 'Сектор стабілізації кордонів.' },
-            moscovia: { name: 'Московия (Периферия)', desc: 'Демілітаризований провінційний сектор.' }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => { 
-            loadRecords(); 
-            setInterval(triggerScoutPulseScan, 120000); // 2 хвилини
+        document.addEventListener('DOMContentLoaded', async () => { 
+            // Перевіряємо, чи перейшов користувач за унікальним посиланням на конкретну статтю
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id');
+            
+            if (articleId) {
+                // Якщо є ID статті — завантажуємо та відкриваємо її примусово!
+                const res = await fetch(`/api/record-detail/\${articleId}`);
+                const rec = await res.json();
+                if (rec) {
+                    currentAgent = rec.agent_type;
+                    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                    document.getElementById(`tab-\${currentAgent}`).classList.add('active');
+                    await loadRecords();
+                    selectRecordForMedia(rec);
+                }
+            } else {
+                loadRecords(); 
+            }
         });
 
         function switchWorkspace(agent) {
             currentAgent = agent;
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`tab-${agent}`).classList.add('active');
+            document.getElementById(`tab-\${agent}`).classList.add('active');
             loadRecords();
         }
 
-        function flyToKraj(key, lat, lng) {
-            document.querySelectorAll('.nav-chip').forEach(chip => chip.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('google-map-iframe').src = `https://maps.google.com/maps?q=${lat},${lng}&t=k&z=9&output=embed`;
-        }
-
         async function loadRecords() {
-            const res = await fetch(`/api/records/${currentAgent}`);
+            const res = await fetch(`/api/records/\${currentAgent}`);
             const records = await res.json();
             const container = document.getElementById('workspace-records');
             container.innerHTML = '';
@@ -206,163 +123,34 @@
             }
             records.forEach(rec => {
                 const card = document.createElement('div');
-                card.className = `record-card ${currentAgent}-card`;
+                card.className = `record-card \${currentAgent}-card`;
                 card.onclick = () => selectRecordForMedia(rec);
                 card.innerHTML = `
                     <div class="record-meta">
-                        <span>[${rec.content_type.toUpperCase()}]</span>
-                        <span>STARDATE: ${rec.stardate}</span>
+                        <span>[\${rec.content_type.toUpperCase()}]</span>
+                        <span>STARDATE: \${rec.stardate}</span>
                     </div>
-                    <div class="record-title">${rec.title}</div>
-                    <div class="record-tags">${rec.hashtags}</div>
+                    <div class="record-title">\${rec.title}</div>
+                    <div class="record-tags">\${rec.hashtags}</div>
                 `;
                 container.appendChild(card);
             });
         }
 
         function selectRecordForMedia(rec) {
-            selectedRecord = rec;
-            
             document.getElementById('reader-body').innerHTML = `
-                <h3 style="font-family:'Cinzel'; text-align:center; color:var(--gold); margin-bottom:10px;">${rec.title.toUpperCase()}</h3>
-                <p style="margin-bottom:10px;">${rec.content}</p>
-                <p style="color:var(--gold); font-size:10px;">Реестровые теги: ${rec.hashtags}</p>
+                <h3 style="font-family:'Cinzel'; text-align:center; color:var(--gold); margin-bottom:10px;">\${rec.title.toUpperCase()}</h3>
+                <p style="margin-bottom:10px;">\${rec.content}</p>
+                <p style="color:var(--gold); font-size:10px;">Реестровые теги: \${rec.hashtags}</p>
             `;
             document.getElementById('reader-footer').innerHTML = `
-                <span>ШИФР: UA-EMP-${rec.epoch_key}-${rec.id}</span>
-                <span>ЗВЕДЕНО В ВЄДОМОСТІ: ${rec.stardate}</span>
+                <span>ШИФР: UA-EMP-\${rec.epoch_key}-\${rec.id}</span>
+                <span>ЗВЕДЕНО В ВЄДОМОСТІ: \${rec.stardate}</span>
             `;
 
             const regionMap = { kyiv: [50.4501, 30.5234], konigsberg: [54.7104, 20.4522], kursk: [51.7373, 36.1874], belgorod: [50.5936, 36.5873], moscovia: [55.7558, 37.6173] };
             const coords = regionMap[rec.region_key] || [50.4501, 30.5234];
-            document.getElementById('google-map-iframe').src = `https://maps.google.com/maps?q=${coords[0]},${coords[1]}&t=k&z=9&output=embed`;
-
-            regenerateBroadcast();
-        }
-
-        async function triggerAISimulation() {
-            const res = await fetch('/api/simulate-generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ agent_type: currentAgent })
-            });
-            const data = await res.json();
-            loadRecords();
-            selectRecordForMedia(data);
-        }
-
-        async function triggerScoutPulseScan() {
-            const res = await fetch('/api/scout/pulse', { method: 'POST' });
-            const data = await res.json();
-            
-            document.getElementById('propaganda-lvl').innerText = `${data.intensity}%`;
-            document.getElementById('propaganda-bar').style.width = `${data.intensity}%`;
-            
-            const agentNames = { reporter: 'Новинарю (15 хв)', archivist: 'Архіваріусу (1 год)', futurologist: 'Футурологу (3 год)' };
-            
-            document.getElementById('scout-task-log').innerHTML = `
-                <span style="color:var(--imperial-red);">● ОБНАРУЖЕН ФЕЙК:</span> "${data.fake_detected}"<br>
-                <span style="color:#39ff14;">➔ ЗАПРОС НАПРАВЛЕН:</span> ${agentNames[data.agent_target]}... Автогенерация...
-            `;
-            
-            setTimeout(async () => {
-                const autoRes = await fetch('/api/scout/auto-execute', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ agent_type: data.agent_target, fake: data.fake_detected, query: data.task_sent, intensity: data.intensity })
-                });
-                const record = await autoRes.json();
-                switchWorkspace(data.agent_target);
-                selectRecordForMedia(record);
-                if (record.telegramSent) {
-                    document.getElementById('scout-task-log').innerHTML += `<br><span style="color:#39ff14;">✔ СУТТЄВО! АВТО-ОПУБЛІКОВАНО В TELEGRAM! (Накал > 90%)</span>`;
-                } else {
-                    document.getElementById('scout-task-log').innerHTML += `<br><span style="color:var(--text-muted); font-size:8px;">✔ Оброблено внутрішньо. В Телеграм не надсилалось (Накал < 90%)</span>`;
-                }
-            }, 3000);
-        }
-
-        function switchPlatform(platform) {
-            activePlatform = platform;
-            document.querySelectorAll('.media-tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(`tab-${platform}`).classList.add('active');
-            regenerateBroadcast();
-        }
-
-        function regenerateBroadcast() {
-            if (!selectedRecord) return;
-            const speaker = document.getElementById('speaker-select').value;
-            const output = document.getElementById('broadcast-output');
-            
-            let result = '';
-            
-            if (speaker === 'mazepa') {
-                if (activePlatform === 'radio') {
-                    result = `[ЕФІР ІНТЕРНЕТ-РАДІО "ГЕРАЛЬД"]\n(Глибокий величний баритон Мазепи):\n\n"Слухайте, вірні сини Метрополії! Канцелярія оприлюднила урядову вєдомость: «${selectedRecord.title}». \n\nУряд повідомляє: «${selectedRecord.content}». Слава нашому Імператору на віки вічні!"`;
-                } else if (activePlatform === 'youtube') {
-                    result = `[СЦЕНАРІЙ YOUTUBE: КАНОН ВЕЛИЧІ]\nВідеоряд: Супутникові кадри Метрополії.\n\nСуфлер: "Шляхетне пани та панянки! Маємо честь розібрати вєдомость: ${selectedRecord.title}. Метрополія доводить до відома периферій: ${selectedRecord.content}."`;
-                } else if (activePlatform === 'telegram') {
-                    result = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Слушайте, верные подданные! ${selectedRecord.content} Наша державная воля непреклонна."\n\n${selectedRecord.hashtags}`;
-                } else {
-                    result = `1/2 Шляхетна громадо! Трактуємо нову урядову вєдомость щодо: ${selectedRecord.title}.\n\n2/2 Наші права підтверджені фактами: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
-                }
-            } else if (speaker === 'werner') {
-                if (activePlatform === 'radio') {
-                    result = `[РАДІО "ТЕХНОКРАТ ПЛЮС"]\n(Енергійний голос Вернера):\n\n"Усім привіт! На зв'язку Вернер. Беремо в роботу свіжу вєдомость: «${selectedRecord.title}». \n\nПоказники чудові: «${selectedRecord.content}». Повний техно-апгрейд сектору гарантовано!"`;
-                } else if (activePlatform === 'youtube') {
-                    result = `[YOUTUBE: TECH FUTURE]\nВідеоряд: Графіки, 3D рендери споруд.\n\nСуфлер: "Хей! Дивіться на цей шалений буст інфраструктури: ${selectedRecord.title}. Цифри кажуть самі за себе: ${selectedRecord.content}."`;
-                } else if (activePlatform === 'telegram') {
-                    result = `⚡️ <b>Вернер системный апдейт:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Хей! Аналитический буст завершен. ${selectedRecord.content} Все системы работают на максимуме!"\n\n${selectedRecord.hashtags}`;
-                } else {
-                    result = `1/2 Повна оптимізація! Отримано нову вєдомость Канцелярії: ${selectedRecord.title}.\n\n2/2 Параметри: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
-                }
-            } else { // glibov
-                if (activePlatform === 'radio') {
-                    result = `[РАДІО "ГЛУМ-FM"]\n(Іронічний сміх Глібова, уїдливий суржик):\n\n"Ну шо, болота, опять заплутались у буквах? Канцелярія випустила нову вєдомость: «${selectedRecord.title}». \n\nПереводжу для примітивних умів: «${selectedRecord.content}»."`;
-                } else if (activePlatform === 'youtube') {
-                    result = `[YOUTUBE: ОПТИКА ГЛІБОВА]\nВідеоряд: Сатирик п'є каву, на екрані скріншоти фейків.\n\nСуфлер: "Здоровенькі були! Ну яка ж комедія. Дивіться сюди, нова вєдомость: ${selectedRecord.title}. Суть проста: ${selectedRecord.content}. Когнітивні рамки знову закрилися над вашими дурними головами!"`;
-                } else if (activePlatform === 'telegram') {
-                    result = `🤡 <b>Глебов деконструкция:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Ну что, болота, опять заврались? ${selectedRecord.content} Как всегда — сели в лужу."\n\n${selectedRecord.hashtags}`;
-                } else {
-                    result = `1/2 Коротко про нову вєдомость для Московії щодо: ${selectedRecord.title}.\n\n2/2 Переводжу: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
-                }
-            }
-            
-            output.innerText = result.replace(/\\n/g, '\n');
-        }
-
-        async function publishRecord() {
-            const title = document.getElementById('record-title').value.trim();
-            const content = document.getElementById('record-content').value.trim();
-            if(!title || !content) return alert('Заполните поля!');
-            const stardate = (8000 + Math.floor(Math.random() * 1000)).toString();
-            await fetch('/api/records', { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ 
-                    agent_type: currentAgent, title, content, region_key: 'moscovia', epoch_key: 'EP-EMPE', hashtags: '#Вручную #Ведомость', content_type: 'Ручная ведомость', stardate 
-                }) 
-            });
-            document.getElementById('record-title').value = ''; 
-            document.getElementById('record-content').value = '';
-            loadRecords();
-        }
-
-        async function broadcastToNetwork() {
-            if (!selectedRecord) return alert('Оберіть вєдомость зліва для трансляції!');
-            const channel = '@UA_Imperial_Chancery';
-            const text = document.getElementById('broadcast-output').innerText;
-            const res = await fetch('/api/telegram/broadcast', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ channel, text, region_key: selectedRecord ? selectedRecord.region_key : 'kyiv' })
-            });
-            const result = await res.json();
-            if (result.success) {
-                alert('🚀 Дублювання успішне! Пост надіслано в @UA_Imperial_Chancery!');
-            } else {
-                alert('❌ Помилка: ' + result.error);
-            }
+            document.getElementById('google-map-iframe').src = `https://maps.google.com/maps?q=\${coords[0]},\${coords[1]}&t=k&z=9&output=embed`;
         }
     </script>
 </body>
