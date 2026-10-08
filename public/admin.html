@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>КОМАНДНИЙ ЦЕНТР | Адмін-панель</title>
+    <title>ІМПЄРСКІЄ ВЄДОМОСТІ | Командний Центр</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { --gold: #dfb76c; --gold-glow: rgba(223,183,108,0.4); --imperial-red: #ff3333; --bg-dark: #0a0b10; --panel-bg: rgba(18,20,28,0.85); --border-color: #2c2f3f; --text-light: #e2e8f0; --text-muted: #8a92b2; }
@@ -109,7 +109,7 @@
             <div class="article-view" id="article-reader">
                 <div class="article-header">ИМПЄРСКІЄ ВЄДОМОСТІ</div>
                 <div class="article-body" id="reader-body">
-Кликните на любой документ Канцелярии слева, дабы запустить спутник и прочитать полную государственную вєдомость...
+Кликните на любой документ Канцелярии слева, дабы развернуть полную версию Вєдомости на упрощенном канцеляристском диалекте...
                 </div>
                 <div class="article-footer" id="reader-footer">
                     <span>ОРГАН: ЦЕНТРАЛЬНАЯ КАНЦЕЛЯРИЯ</span>
@@ -178,12 +178,11 @@
         var audioCtx = null;
         var synth = window.speechSynthesis;
 
-        // ПУЛ ВЛАСНИХ ШІ-ГЕНЕРАЦІЙ ТЕКСТІВ (Виключає баг з відображенням selectedRecord.title у тексті!)
         var scriptsDB = {
             girkin: {
                 radio: "🎵 [МУЗЫКАЛЬНЫЙ РЕФРЕН ЛУЧИНА-FM] 🎵\n*звучит весёлый проигранный мотив группы Ленинград — «Москва сгорела целиком»*\n\n[ЕТЕР ЛУЧИНА-FM — ШОУ «НОСТАЛЬГИЯ ПО ОКОПАМ»]\n*тихое заунывное поскуливание и шорох старых карт*\n\n«Да... На связи Игорь Ноющий. Докладываю по ситуации. Положение на наших фронтах... катастрофическое. Метрополия закручивает гайки. Все наши опричники теперь обязаны совершать пять намазов в день в сторону Киева и ползти в хадж к Метрополии на коленях, начиная прямо от Суджанской трубы! И ведь ползут же, дурачьё, стирая колени в кровь... Мы полностью обречены!»",
-                youtube: "[YOUTUBE: ИГОР�� ТОЖЕ ПЛАЧЕТ]\nВидеоряд: Ноющий сидит на фоне старого флага и утирает слезы.\n\n«Приветствую. Очередная директива Метрополии лишает нас последнего достоинства. Нас заставляют ползти на коленях в Киев. Полное предательство элит...»",
-                telegram: "😭 <b>Игорь Ноющий со содроганием сообщает:</b>\n\nПолный крах. Все опричники на болотах выстроены в колонны и ползут на коленях в сторону Днепра, начиная от Суджанской трубы. Это национальный позор.",
+                youtube: "[YOUTUBE: ИГОРЬ ТОЖЕ ПЛАЧЕТ]\nВидеоряд: Ноющий сидит на фоне старого флага и утирает слезы.\n\n«Приветствую. Очередная директива Метрополии лишает нас последнего достоинства. Нас заставляют ползти на коленях в Киев. Полное предательство элит...»",
+                telegram: "😭 <b>Игорь Ноющий со содроганием сообщает:</b>\n\nПолный крах. Все опричники на болотах выстроены в коленях и ползут на коленях в сторону Днепра, начиная от Суджанской трубы. Это национальный позор.",
                 twitter: "1/2 Очередной крах. Канцелярия лишила нас права голоса.\n\n2/2 Ползем на коленях от Суджанской трубы в Киев, совершая пятикратный намаз. Колени стерты в кровь."
             },
             solovyov: {
@@ -208,33 +207,26 @@
             moscovia: { name: 'Московия (Периферия)', desc: 'Демілітаризований провінційний сектор.' }
         };
 
-        document.addEventListener('DOMContentLoaded', () => { 
+        document.addEventListener('DOMContentLoaded', function() { 
             loadRecords(); 
             setInterval(triggerScoutPulseScan, 180000); // 3 хвилини
         });
 
-        // 🎵 ЧИСТИЙ МАТЕМАТИЧНИЙ СИНТЕЗАТОР "МОСКВА ЗГОРІЛА" (Працює стабільно без інтернету!)
         function playChiptuneJingle() {
             try {
                 audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                
-                // Проста весела мелодія (ноти C, E, G, A)
                 var notes = [261.63, 329.63, 392.00, 440.00, 392.00, 329.63, 261.63];
-                var tempo = 0.15; // Швидкість нот
+                var tempo = 0.15;
 
-                notes.forEach((freq, index) => {
+                notes.forEach(function(freq, index) {
                     var osc = audioCtx.createOscillator();
                     var gain = audioCtx.createGain();
-                    
-                    osc.type = 'triangle'; // Ретро 8-бітний звук
+                    osc.type = 'triangle';
                     osc.frequency.value = freq;
-                    
                     gain.gain.setValueAtTime(0.15, audioCtx.currentTime + index * tempo);
                     gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + (index + 1) * tempo);
-                    
                     osc.connect(gain);
                     gain.connect(audioCtx.destination);
-                    
                     osc.start(audioCtx.currentTime + index * tempo);
                     osc.stop(audioCtx.currentTime + (index + 1) * tempo);
                 });
@@ -251,10 +243,7 @@
                 btn.innerText = 'STOP';
                 btn.style.background = '#ff3333';
                 vis.className = 'player-visualizer playing';
-                
-                // Граємо ретро-мелодію синтезатором!
                 playChiptuneJingle();
-                
                 speakCurrentBroadcast();
             } else {
                 btn.innerText = 'PLAY';
@@ -266,201 +255,178 @@
 
         function switchWorkspace(agent) {
             currentAgent = agent;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
             document.getElementById('tab-' + agent).classList.add('active');
             loadRecords();
         }
 
         function flyToKraj(key, lat, lng) {
-            document.querySelectorAll('.nav-chip').forEach(chip => chip.classList.remove('active'));
+            document.querySelectorAll('.nav-chip').forEach(function(chip) { chip.classList.remove('active'); });
             event.target.classList.add('active');
-            document.getElementById('google-map-iframe').src = `https://maps.google.com/maps?q=${lat},${lng}&t=k&z=9&output=embed`;
+            document.getElementById('google-map-iframe').src = 'https://maps.google.com/maps?q=' + lat + ',' + lng + '&t=k&z=9&output=embed';
         }
 
-        async function loadRecords() {
-            const res = await fetch('/api/records/' + currentAgent);
-            const records = await res.json();
-            const container = document.getElementById('workspace-records');
-            container.innerHTML = '';
-            if(records.length === 0) {
-                container.innerHTML = '<div style="color: var(--text-muted); font-size:11px; text-align:center; margin-top:30px;">Пространство пусто.</div>';
-                return;
-            }
-            records.forEach(rec => {
-                const card = document.createElement('div');
-                card.className = `record-card ${currentAgent}-card`;
-                card.onclick = () => selectRecordForMedia(rec);
-                card.innerHTML = `
-                    <div class="record-meta">
-                        <span>[${rec.content_type.toUpperCase()}]</span>
-                        <span>STARDATE: ${rec.stardate}</span>
-                    </div>
-                    <div class="record-title">${rec.title}</div>
-                    <div class="record-tags">${rec.hashtags}</div>
-                `;
-                container.appendChild(card);
-            });
+        function loadRecords() {
+            return fetch('/api/records/' + currentAgent)
+                .then(function(res) { return res.json(); })
+                .then(function(records) {
+                    var container = document.getElementById('workspace-records');
+                    container.innerHTML = '';
+                    if(records.length === 0) {
+                        container.innerHTML = '<div style="color: var(--text-muted); font-size:11px; text-align:center; margin-top:30px;">Пространство пусто.</div>';
+                        return;
+                    }
+                    records.forEach(function(rec) {
+                        var card = document.createElement('div');
+                        card.className = 'record-card ' + currentAgent + '-card';
+                        card.onclick = function() { selectRecordForMedia(rec); };
+                        card.innerHTML = '<div class="record-meta"><span>[' + rec.content_type.toUpperCase() + ']</span><span>STARDATE: ' + rec.stardate + '</span></div><div class="record-title">' + rec.title + '</div><div class="record-tags">' + rec.hashtags + '</div>';
+                        container.appendChild(card);
+                    });
+                });
         }
 
         function selectRecordForMedia(rec) {
             selectedRecord = rec;
+            document.getElementById('reader-body').innerHTML = '<h3 style="font-family:\'Cinzel\'; text-align:center; color:var(--gold); margin-bottom:10px;">' + rec.title.toUpperCase() + '</h3><p style="margin-bottom:10px;">' + rec.content + '</p><p style="color:var(--gold); font-size:10px;">Реестровые теги: ' + rec.hashtags + '</p>';
+            document.getElementById('reader-footer').innerHTML = '<span>ШИФР: UA-EMP-' + rec.epoch_key + '-' + rec.id + '</span><span>ЗВЕДЕНО В ВЄДОМОСТІ: ' + rec.stardate + '</span>';
             
-            document.getElementById('reader-body').innerHTML = `
-                <h3 style="font-family:'Cinzel'; text-align:center; color:var(--gold); margin-bottom:10px;">${rec.title.toUpperCase()}</h3>
-                <p style="margin-bottom:10px;">${rec.content}</p>
-                <p style="color:var(--gold); font-size:10px;">Реестровые теги: ${rec.hashtags}</p>
-            `;
-            document.getElementById('reader-footer').innerHTML = `
-                <span>ШИФР: UA-EMP-${rec.epoch_key}-${rec.id}</span>
-                <span>ЗВЕДЕНО В ВЄДОМОСТІ: ${rec.stardate}</span>
-            `;
-
-            const regionMap = { kyiv: [50.4501, 30.5234], konigsberg: [54.7104, 20.4522], kursk: [51.7373, 36.1874], belgorod: [50.5936, 36.5873], moscovia: [55.7558, 37.6173] };
-            const coords = regionMap[rec.region_key] || [50.4501, 30.5234];
-            document.getElementById('google-map-iframe').src = `https://maps.google.com/maps?q=${coords[0]},${coords[1]}&t=k&z=9&output=embed`;
-
+            var regionMap = { kyiv: [50.4501, 30.5234], konigsberg: [54.7104, 20.4522], kursk: [51.7373, 36.1874], belgorod: [50.5936, 36.5873], moscovia: [55.7558, 37.6173] };
+            var coords = regionMap[rec.region_key] || [50.4501, 30.5234];
+            document.getElementById('google-map-iframe').src = 'https://maps.google.com/maps?q=' + coords[0] + ',' + coords[1] + '&t=k&z=9&output=embed';
             regenerateBroadcast();
         }
 
-        async function triggerAISimulation() {
-            const res = await fetch('/api/simulate-generate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ agent_type: currentAgent })
-            });
-            const data = await res.json();
-            loadRecords().then(() => { selectRecordForMedia(data); });
+        function triggerAISimulation() {
+            fetch('/api/simulate-generate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ agent_type: currentAgent }) })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    loadRecords().then(function() { selectRecordForMedia(data); });
+                });
         }
 
-        async function triggerScoutPulseScan() {
-            const res = await fetch('/api/scout/pulse', { method: 'POST' });
-            const data = await res.json();
-            
-            document.getElementById('propaganda-lvl').innerText = `${data.intensity}%`;
-            document.getElementById('propaganda-bar').style.width = `${data.intensity}%`;
-            
-            const agentNames = { reporter: 'Новинарю (15 хв)', archivist: 'Архіваріусу (1 год)', futurologist: 'Футурологу (3 год)' };
-            
-            document.getElementById('scout-task-log').innerHTML = `
-                <span style="color:var(--imperial-red);">● ОБНАРУЖЕН ФЕЙК:</span> "${data.fake_detected}"<br>
-                <span style="color:#39ff14;">➔ ЗАПРОС НАПРАВЛЕН:</span> ${agentNames[data.agent_target]}... Автогенерация...
-            `;
-            
-            setTimeout(async () => {
-                const autoRes = await fetch('/api/scout/auto-execute', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ agent_type: data.agent_target, fake: data.fake_detected, query: data.task_sent, intensity: data.intensity })
+        function triggerScoutPulseScan() {
+            fetch('/api/scout/pulse', { method: 'POST' })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    document.getElementById('propaganda-lvl').innerText = data.intensity + '%';
+                    document.getElementById('propaganda-bar').style.width = data.intensity + '%';
+                    
+                    var agentNames = { reporter: 'Новинарю (15 хв)', archivist: 'Архіваріусу (1 год)', futurologist: 'Футурологу (3 год)' };
+                    document.getElementById('scout-task-log').innerHTML = '<span style="color:var(--imperial-red);">● ОБНАРУЖЕН ФЕЙК:</span> "' + data.fake_detected + '"<br><span style="color:#39ff14;">➔ ЗАПРОС НАПРАВЛЕН:</span> ' + agentNames[data.agent_target] + '... Автогенерация...';
+                    
+                    setTimeout(function() {
+                        fetch('/api/scout/auto-execute', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ agent_type: data.agent_target, fake: data.fake_detected, query: data.task_sent, intensity: data.intensity })
+                        })
+                        .then(function(res) { return res.json(); })
+                        .then(function(record) {
+                            switchWorkspace(data.agent_target);
+                            selectRecordForMedia(record);
+                            if (record.telegramSent) {
+                                document.getElementById('scout-task-log').innerHTML += '<br><span style="color:#39ff14;">✔ СУТТЄВО! АВТО-ОПУБЛІКОВАНО В TELEGRAM! (Накал > 90%)</span>';
+                            } else {
+                                document.getElementById('scout-task-log').innerHTML += '<br><span style="color:var(--text-muted); font-size:8px;">✔ Оброблено внутрішньо. В Телеграм не надсилалось (Накал < 90%)</span>';
+                            }
+                        });
+                    }, 3000);
                 });
-                const record = await autoRes.json();
-                switchWorkspace(data.agent_target);
-                selectRecordForMedia(record);
-                document.getElementById('scout-task-log').innerHTML += `<br><span style="color:var(--gold);">✔ ВЄДОМОСТЬ АВТО-ОПУБЛІКОВАНА В TELEGRAM!</span>`;
-            }, 3000);
         }
 
         function switchPlatform(platform) {
             activePlatform = platform;
-            document.querySelectorAll('.media-tab').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(`tab-${platform}`).classList.add('active');
+            document.querySelectorAll('.media-tab').forEach(function(tab) { tab.classList.remove('active'); });
+            document.getElementById('tab-' + platform).classList.add('active');
             regenerateBroadcast();
         }
 
         function regenerateBroadcast() {
             if (!selectedRecord) return;
-            const speaker = document.getElementById('speaker-select').value;
-            const output = document.getElementById('broadcast-output');
-            
-            // Забираємо чистий, ідеально сформований текст з нашої бази даних на клієнті
-            const result = scriptsDB[speaker][activePlatform];
+            var speaker = document.getElementById('speaker-select').value;
+            var output = document.getElementById('broadcast-output');
+            var result = scriptsDB[speaker][activePlatform];
             output.innerText = result.replace(/\n/g, '
 ');
         }
 
-        // 🧠 РОЗУМНИЙ ШІ-ПІДБІР ЧОЛОВІЧИХ ТА ЖІНОЧИХ ГОЛОСІВ ДЛЯ СПІКЕРІВ!
         function speakCurrentBroadcast() {
             if (!selectedRecord || !isPlaying) return;
             if (!synth) return;
 
             synth.cancel(); 
-
             var textToSpeak = document.getElementById('broadcast-output').innerText;
-            var cleanText = textToSpeak.replace(/\[.*?\]/g, "").replace(/\*.*?\*/g, "").replace(/«/g, "").replace(/»/g, "");
+            var cleanText = textToSpeak.replace(/\[.*?\\x5d/g, "").replace(/\*.*?\*/g, "").replace(/«/g, "").replace(/»/g, "");
 
             var utterance = new SpeechSynthesisUtterance(cleanText);
             var speaker = document.getElementById('speaker-select').value;
-
-            // Шукаємо голоси в системі
             var voices = synth.getVoices();
             var selectedVoice = null;
 
             if (speaker === 'girkin') {
-                utterance.pitch = 0.65; // Низький ниючий
-                utterance.rate = 0.85;  // Повільний
+                utterance.pitch = 0.65; 
+                utterance.rate = 0.85;  
                 utterance.lang = 'ru-RU';
-                // Шукаємо російський чоловічий голос (напр. Павел)
-                selectedVoice = voices.find(v => v.lang.startsWith('ru') && (v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('yuri')));
+                selectedVoice = voices.find(function(v) { return v.lang.startsWith('ru') && (v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('male') || v.name.toLowerCase().includes('yuri')); });
             } else if (speaker === 'solovyov') {
-                utterance.pitch = 1.35; // Верескливий істерик
-                utterance.rate = 1.15;  // Швидкий
+                utterance.pitch = 1.35; 
+                utterance.rate = 1.15;  
                 utterance.lang = 'ru-RU';
-                // Шукаємо російський чоловічий голос (напр. Дмитро)
-                selectedVoice = voices.find(v => v.lang.startsWith('ru') && (v.name.toLowerCase().includes('dmitry') || v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('male')));
+                selectedVoice = voices.find(function(v) { return v.lang.startsWith('ru') && (v.name.toLowerCase().includes('dmitry') || v.name.toLowerCase().includes('pavel') || v.name.toLowerCase().includes('male')); });
             } else {
-                utterance.pitch = 1.0;  // Велична бариня Катерина II
+                utterance.pitch = 1.0;  
                 utterance.rate = 0.9;
                 utterance.lang = 'ru-RU';
-                // Шукаємо жіночий російський голос
-                selectedVoice = voices.find(v => v.lang.startsWith('ru') && (v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('elena')));
+                selectedVoice = voices.find(function(v) { return v.lang.startsWith('ru') && (v.name.toLowerCase().includes('zira') || v.name.toLowerCase().includes('female') || v.name.toLowerCase().includes('elena')); });
             }
 
-            // Якщо специфічний голос не знайдено — беремо будь-який російський для сумісності мовлення
             if (!selectedVoice) {
-                selectedVoice = voices.find(v => v.lang.startsWith('ru'));
+                selectedVoice = voices.find(function(v) { return v.lang.startsWith('ru'); });
             }
-
             if (selectedVoice) {
                 utterance.voice = selectedVoice;
             }
-
             synth.speak(utterance);
         }
 
-        async function publishRecord() {
-            const title = document.getElementById('record-title').value.trim();
-            const content = document.getElementById('record-content').value.trim();
+        function publishRecord() {
+            var title = document.getElementById('record-title').value.trim();
+            var content = document.getElementById('record-content').value.trim();
             if(!title || !content) return alert('Заполните поля!');
-            const stardate = (8000 + Math.floor(Math.random() * 1000)).toString();
-            await fetch('/api/records', { 
+            var stardate = (8000 + Math.floor(Math.random() * 1000)).toString();
+            fetch('/api/records', { 
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' }, 
                 body: JSON.stringify({ 
-                    agent_type: currentAgent, title, content, region_key: 'moscovia', epoch_key: 'EP-EMPE', hashtags: '#Вручную #Ведомость', content_type: 'Ручная ведомость', stardate 
+                    agent_type: currentAgent, title: title, content: content, region_key: 'moscovia', epoch_key: 'EP-EMPE', hashtags: '#Вручную #Ведомость', content_type: 'Ручная ведомость', stardate: stardate 
                 }) 
+            }).then(function() {
+                document.getElementById('record-title').value = ''; 
+                document.getElementById('record-content').value = '';
+                loadRecords();
             });
-            document.getElementById('record-title').value = ''; 
-            document.getElementById('record-content').value = '';
-            loadRecords();
         }
 
-        async function broadcastToNetwork() {
-            if (!selectedRecord) return alert('Оберіть вєдомость зліва для трансляції!');
-            const channel = '@UA_Imperial_Chancery';
-            const text = document.getElementById('broadcast-output').innerText;
-            const res = await fetch('/api/telegram/broadcast', {
+        function broadcastToNetwork() {
+            if (!selectedRecord) return alert('Оберіть вєдомость зліва для трансляц��ї!');
+            var channel = '@UA_Imperial_Chancery';
+            var text = document.getElementById('broadcast-output').innerText;
+            fetch('/api/telegram/broadcast', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ channel, text, region_key: selectedRecord.region_key, id: selectedRecord.id })
+                body: JSON.stringify({ channel: channel, text: text, region_key: selectedRecord.region_key, id: selectedRecord.id })
+            })
+            .then(function(res) { return res.json(); })
+            .then(function(result) {
+                if (result.success) {
+                    alert('🚀 Світлина успішно надіслана в @UA_Imperial_Chancery!');
+                } else {
+                    alert('❌ Помилка: ' + result.error);
+                }
             });
-            const result = await res.json();
-            if (result.success) {
-                alert('🚀 Світлина успішно надіслана в @UA_Imperial_Chancery!');
-            } else {
-                alert('❌ Помилка: ' + result.error);
-            }
         }
         
-        // Оновлюємо голоси в системі при зміні девайсів
         if (synth && synth.onvoiceschanged !== undefined) {
             synth.onvoiceschanged = function() {
                 if (isPlaying) speakCurrentBroadcast();
