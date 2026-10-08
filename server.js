@@ -118,11 +118,29 @@ app.post('/api/scout/auto-execute', (req, res) => {
             const randomSpeaker = speakers[Math.floor(Math.random() * speakers.length)];
             let telegramPost = '';
             if (randomSpeaker === 'mazepa') {
-                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
+                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>
+
+<b>${data.title}</b>
+
+"${data.content}"
+
+${data.tags}`;
             } else if (randomSpeaker === 'werner') {
-                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
+                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>
+
+<b>${data.title}</b>
+
+"${data.content}"
+
+${data.tags}`;
             } else {
-                telegramPost = `🤡 <b>Глебов деконструкция:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
+                telegramPost = `🤡 <b>Глебов деконструкция:</b>
+
+<b>${data.title}</b>
+
+"${data.content}"
+
+${data.tags}`;
             }
             sendTelegramMessage(telegramPost);
             telegramSent = true;
