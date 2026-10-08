@@ -109,7 +109,7 @@
             <div class="article-view" id="article-reader">
                 <div class="article-header">ИМПЄРСКІЄ ВЄДОМОСТІ</div>
                 <div class="article-body" id="reader-body">
-Кликните на любой документ Канцелярии слева, дабы развернуть полную версию Вєдомости на упрощенном канцелярском диалекте для просвещения умов периферии...
+Кликните на любой документ Канцелярии слева, дабы развернуть полную версию Вєдомости на упрощенном канцеляристском диалекте...
                 </div>
                 <div class="article-footer" id="reader-footer">
                     <span>ОРГАН: ЦЕНТРАЛЬНАЯ КАНЦЕЛЯРИЯ</span>
@@ -137,7 +137,7 @@
 
             <div class="media-btn-group">
                 <div class="media-tab active" id="tab-radio" onclick="switchPlatform('radio')">📻 Радио</div>
-                <div class="media-tab" id="tab-youtube" onclick="switchPlatform('youtube')">🎥 YouTube</div>
+                <div class="media-tab" id="tab-youtube" onclick="soundIframe('youtube')">🎥 YouTube</div>
                 <div class="media-tab" id="tab-telegram" onclick="switchPlatform('telegram')">📱 Telegram</div>
                 <div class="media-tab" id="tab-twitter" onclick="switchPlatform('twitter')">🐦 X-Тред</div>
             </div>
@@ -155,13 +155,12 @@
 Оберіть Вєдомость ліворуч, щоб розпочати автоматичне перекодування ефіру...
             </div>
 
-            <!-- Реальне підключення до Telegram-каналу -->
-            <div style="display: flex; flex-direction: column; gap: 5px; border-top:1px solid var(--border-color); padding-top:8px;">
-                <label style="font-size: 9px; font-family: 'Orbitron'; color: var(--gold);">Вкажіть ваш Telegram-канал:</label>
-                <input type="text" id="telegram-channel" placeholder="@назва_каналу (напр. @my_channel)" style="padding: 5px; font-size:10px;">
+            <div style="background: rgba(57,255,20,0.05); border:1px solid #39ff14; padding:8px; border-radius:4px; font-size:10px; text-align:center; color:#39ff14;">
+                📡 АВТОНОМНЫЙ РЕАКТОР ОНЛАЙН:<br>
+                Пости автоматично транслюються у канал <b>@UA_Imperial_Chancery</b>!
             </div>
 
-            <button onclick="broadcastToNetwork()" style="background: linear-gradient(135deg, #ff3333, #39ff14); color:#000; font-weight:bold;">🚀 Транслировать в ефир (Telegram)</button>
+            <button onclick="broadcastToNetwork()" style="background: linear-gradient(135deg, #39ff14, #00f0ff); color:#000; font-weight:bold;">🚀 Принудительный дубль в Telegram</button>
         </div>
     </div>
 
@@ -180,7 +179,8 @@
 
         document.addEventListener('DOMContentLoaded', () => { 
             loadRecords(); 
-            setInterval(triggerScoutPulseScan, 20000);
+            // Запуск РЛС кожні 25 секунд
+            setInterval(triggerScoutPulseScan, 25000);
         });
 
         function switchWorkspace(agent) {
@@ -275,7 +275,7 @@
                 const record = await autoRes.json();
                 switchWorkspace(data.agent_target);
                 selectRecordForMedia(record);
-                document.getElementById('scout-task-log').innerHTML += `<br><span style="color:var(--gold);">✔ ВЄДОМОСТЬ ДОДАНО В ЕФІР!</span>`;
+                document.getElementById('scout-task-log').innerHTML += `<br><span style="color:var(--gold);">✔ ВЄДОМОСТЬ АВТО-ОПУБЛІКОВАНА В TELEGRAM!</span>`;
             }, 3000);
         }
 
@@ -299,9 +299,9 @@
                 } else if (activePlatform === 'youtube') {
                     result = `[СЦЕНАРІЙ YOUTUBE: КАНОН ВЕЛИЧІ]\nВідеоряд: Супутникові кадри Метрополії.\n\nСуфлер: "Шляхетне пани та панянки! Маємо честь розібрати вєдомость: ${selectedRecord.title}. Метрополія доводить до відома периферій: ${selectedRecord.content}."`;
                 } else if (activePlatform === 'telegram') {
-                    result = `📜 Шляхетний Лорд-Адмірал Мазепа коментує вєдомость щодо: *${selectedRecord.title}*.\n\n"Справа нашого державотворення вимагає повної вірності. Усі провінційні Края мають підкоритися: ${selectedRecord.content}."\n\n${selectedRecord.hashtags} #Метрополія #Бароко`;
+                    result = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Слушайте, верные подданные! ${selectedRecord.content} Наша державная воля непреклонна."\n\n${selectedRecord.hashtags} #Метрополия`;
                 } else {
-                    result = `1/2 Шляхетна громадо! Трактуємо нову урядову вєдомость щодо: ${selectedRecord.title}.\n\n2/2 Наші споконвічні права підтверджені фактами: ${selectedRecord.content}. Сумніви — це слабкість! ${selectedRecord.hashtags}`;
+                    result = `1/2 Шляхетна громадо! Трактуємо нову урядову вєдомость щодо: ${selectedRecord.title}.\n\n2/2 Наші права підтверджені фактами: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
                 }
             } else if (speaker === 'werner') {
                 if (activePlatform === 'radio') {
@@ -309,19 +309,19 @@
                 } else if (activePlatform === 'youtube') {
                     result = `[YOUTUBE: TECH FUTURE]\nВідеоряд: Графіки, 3D рендери споруд.\n\nСуфлер: "Хей! Дивіться на цей шалений буст інфраструктури: ${selectedRecord.title}. Цифри кажуть самі за себе: ${selectedRecord.content}."`;
                 } else if (activePlatform === 'telegram') {
-                    result = `⚡️ СЕРВЕРНИЙ АПГРЕЙД: *${selectedRecord.title}*\n\nТехнократ Вернер коментує системний реліз: ${selectedRecord.content}. Процеси автоматизації та оптимізації запущено!\n\n${selectedRecord.hashtags} #Tech #Майбутнє`;
+                    result = `⚡️ <b>Вернер системный апдейт:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Хей! Аналитический буст завершен. ${selectedRecord.content} Все системы работают на максимуме!"\n\n${selectedRecord.hashtags} #Tech`;
                 } else {
-                    result = `1/2 Повна оптимізація! Отримано нову вєдомость Канцелярії: ${selectedRecord.title}.\n\n2/2 Параметри: ${selectedRecord.content}. Технологічний щит Метрополії активовано! ${selectedRecord.hashtags}`;
+                    result = `1/2 Повна оптимізація! Отримано нову вєдомость Канцелярії: ${selectedRecord.title}.\n\n2/2 Параметри: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
                 }
             } else { // glibov
                 if (activePlatform === 'radio') {
                     result = `[РАДІО "ГЛУМ-FM"]\n(Іронічний сміх Глібова, уїдливий суржик):\n\n"Ну шо, болота, опять заплутались у буквах? Канцелярія випустила нову вєдомость: «${selectedRecord.title}». \n\nПереводжу для примітивних умів: «${selectedRecord.content}»."`;
                 } else if (activePlatform === 'youtube') {
-                    result = `[YOUTUBE: ОПТИКА ГЛІБОВА]\nВідеоряд: Сатирик п'є каву, на екрані скріншоти фейків.\n\nСуфлер: "Здоровенькі були! Ну яка ж комедія. Дивіться сюди, нова вєдомость: ${selectedRecord.title}. Суть проста: ${selectedRecord.content}. Когнітивні рамки знову закрилися над вашими головами!"`;
+                    result = `[YOUTUBE: ОПТИКА ГЛІБОВА]\nВідеоряд: Сатирик п'є каву, на екрані скріншоти фейків.\n\nСуфлер: "Здоровенькі були! Ну яка ж комедія. Дивіться сюди, нова вєдомость: ${selectedRecord.title}. Суть проста: ${selectedRecord.content}. Когнітивні рамки знову закрилися над вашими дурними головами!"`;
                 } else if (activePlatform === 'telegram') {
-                    result = `🤡 Спеціально для провінцій зі спрощеною свідомістю розжовую вєдомость: *${selectedRecord.title}*\n\nФакти: ${selectedRecord.content}. Букву "І" вам повернути забули, зате титан ви завантажити не забули. Працюємо далі!\n\n${selectedRecord.hashtags} #Сатира #Глібов`;
+                    result = `🤡 <b>Глебов деконструкция:</b>\n\n<b>${selectedRecord.title}</b>\n\n"Ну что, болота, опять заврались? ${selectedRecord.content} Как всегда — сели в лужу."\n\n${selectedRecord.hashtags} #Сатира`;
                 } else {
-                    result = `1/2 Коротко про нову вєдомость для Московії щодо: ${selectedRecord.title}.\n\n2/2 Переводжу: ${selectedRecord.content}. Понятійна вертикаль знову зламалася об суверенітет Метрополії. Яка сумна новина. ${selectedRecord.hashtags}`;
+                    result = `1/2 Коротко про нову вєдомость для Московії щодо: ${selectedRecord.title}.\n\n2/2 Переводжу: ${selectedRecord.content}. ${selectedRecord.hashtags}`;
                 }
             }
             
@@ -347,11 +347,8 @@
 
         async function broadcastToNetwork() {
             if (!selectedRecord) return alert('Оберіть вєдомость зліва для трансляції!');
-            const channel = document.getElementById('telegram-channel').value.trim();
-            if (!channel) return alert('Вкажіть ім\'я вашого Телеграм-каналу (наприклад, @my_channel)!');
-            
+            const channel = '@UA_Imperial_Chancery';
             const text = document.getElementById('broadcast-output').innerText;
-            
             const res = await fetch('/api/telegram/broadcast', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -359,9 +356,9 @@
             });
             const result = await res.json();
             if (result.success) {
-                alert('🚀 Світлина Метрополії успішно трансльована в ефір! Перевірте ваш Телеграм-канал!');
+                alert('🚀 Дублювання успішне! Пост надіслано в @UA_Imperial_Chancery!');
             } else {
-                alert('❌ Помилка трансляції: ' + result.error + '\nПереконайтеся, що бот @ImperialChanceryBot доданий у ваш канал як адміністратор з правами публікації!');
+                alert('❌ Помилка: ' + result.error);
             }
         }
     </script>
