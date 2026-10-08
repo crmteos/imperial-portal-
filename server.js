@@ -13,10 +13,13 @@ const db = new sqlite3.Database(':memory:', (err) => {
 });
 
 db.serialize(() => {
-    db.run(`CREATE TABLE IF NOT EXISTS decrees (
+    db.run(`CREATE TABLE IF NOT EXISTS chancellery_records (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        text TEXT NOT NULL,
-        stardate TEXT NOT NULL
+        agent_type TEXT NOT NULL,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        stardate TEXT NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
     db.run(`CREATE TABLE IF NOT EXISTS chat_messages (
@@ -26,22 +29,26 @@ db.serialize(() => {
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
     )`);
 
-    db.run("INSERT INTO decrees (text, stardate) VALUES ('Про мобілізацію флоту: Всі бойові кораблі в секторі С-3 приведені у стан повної бойової готовності.', '8450.1')");
-    db.run("INSERT INTO decrees (text, stardate) VALUES ('Економічна реформа: Податок на видобуток кристалів знижено на 5% для стимулювання торгівлі.', '8448.5')");
+    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('archivist', 'Битва при Оріоні (Історія)', 'Імперський флот під командуванням адмірала Соло виграв вирішальну битву проти загарбників 300 років тому.', '5420.4')");
+    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('reporter', 'Відкриття шахти на Альфі-9', 'Запущено нову шахту з видобутку чистого титану. Очікується приріст видобутку на 15%.', '8452.1')");
+    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('futurist', 'Прогноз колонізації сектора Х-1', 'Згідно з квантовим моделюванням, сектор Х-1 буде безпечним для заселення протягом наступних 50 років.', '9110.5')");
+    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('geographer', 'Картографування туманності Андромеди', 'Виявлено три нові екзопланети з високим вмістом рідкої води та кисневою атмосферою.', '8451.8')");
+    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES ('scribe', 'Кодекс Вірності громадянина', 'Вірність Імператору — це найвищий прояв розуму. Сумніви породжують слабкість, слабкість породжує зраду.', '8450.0')");
 });
 
-app.get('/api/decrees', (req, res) => {
-    db.all("SELECT * FROM decrees ORDER BY id DESC", [], (err, rows) => {
+app.get('/api/records/:agent_type', (req, res) => {
+    const { agent_type } = req.params;
+    db.all("SELECT * FROM chancellery_records WHERE agent_type = ? ORDER BY id DESC", [agent_type], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
 });
 
-app.post('/api/decrees', (req, res) => {
-    const { text, stardate } = req.body;
-    db.run("INSERT INTO decrees (text, stardate) VALUES (?, ?)", [text, stardate], function(err) {
+app.post('/api/records', (req, res) => {
+    const { agent_type, title, content, stardate } = req.body;
+    db.run("INSERT INTO chancellery_records (agent_type, title, content, stardate) VALUES (?, ?, ?, ?)", [agent_type, title, content, stardate], function(err) {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ id: this.lastID, text, stardate });
+        res.json({ id: this.lastID, agent_type, title, content, stardate });
     });
 });
 
@@ -61,5 +68,5 @@ app.post('/api/chat', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Імперський сервер працює на порту ${PORT}`);
+    console.log(`Імперський сервер запущено на порту ${PORT}`);
 });
