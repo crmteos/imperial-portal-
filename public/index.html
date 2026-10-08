@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Імперський Командний Центр | Imperial Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Orbitron:wght@400;700;900&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #dfb76c;
+            --gold-glow: rgba(223, 183, 108, 0.4);
+            --imperial-red: #ff3333;
+            --red-glow: rgba(255, 51, 51, 0.3);
+            --bg-dark: #0a0b10;
+            --panel-bg: rgba(18, 20, 28, 0.85);
+            --border-color: #2c2f3f;
+            --text-light: #e2e8f0;
+            --text-muted: #8a92b2;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        header {
+            background: linear-gradient(180deg, rgba(10, 11, 16, 0.95) 0%, rgba(18, 20, 28, 0.7) 100%);
+            border-bottom: 2px solid var(--gold);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+        .imperial-crest {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, var(--gold) 30%, transparent 70%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px;
+            color: #000;
+            font-weight: 900;
+            border: 2px solid var(--gold);
+        }
+        .title-group h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            color: var(--gold);
+        }
+        .dashboard-container {
+            max-width: 1600px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 20px;
+        }
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--gold);
+            border-radius: 6px;
+            padding: 20px;
+        }
+        .decree-item {
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid var(--imperial-red);
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 0 4px 4px 0;
+            font-size: 13px;
+        }
+        .decree-date { color: var(--imperial-red); font-size: 10px; }
+        .chat-messages {
+            height: 250px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-msg { padding: 10px; border-radius: 6px; font-size: 13px; max-width: 85%; }
+        .msg-system { background: rgba(223, 183, 108, 0.1); align-self: flex-start; }
+        .msg-user { background: rgba(255, 51, 51, 0.1); align-self: flex-end; }
+        .msg-sender { font-family: 'Orbitron', sans-serif; font-size: 10px; color: var(--gold); }
+        input, button { background: #12141c; border: 1px solid var(--border-color); color: #fff; padding: 10px; }
+        button { background: var(--gold); color: #000; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="imperial-crest">I</div>
+            <div class="title-group">
+                <h1>ІМПЕРСЬКИЙ ПОРТАЛ</h1>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="panel">
+            <h2>Імперські Укази</h2>
+            <div id="decree-list" style="margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="new-decree-text" placeholder="Новий указ..." style="flex:1;">
+                <button onclick="publishDecree()">Видати</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Статус Зв'язку</h2>
+            <div class="chat-messages" id="chat-messages"></div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="chat-input" placeholder="Команда..." style="flex:1;">
+                <button onclick="sendChatMessage()">ОК</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDecrees();
+            loadChat();
+        });
+
+        async function loadDecrees() {
+            const res = await fetch('/api/decrees');
+            const decrees = await res.json();
+            const list = document.getElementById('decree-list');
+            list.innerHTML = '';
+            decrees.forEach(dec => {
+                const item = document.createElement('div');
+                item.className = 'decree-item';
+                item.innerHTML = `<div class="decree-date">STARDATE ${dec.stardate}</div><strong>${dec.text}</strong>`;
+                list.appendChild(item);
+            });
+        }
+
+        async function publishDecree() {
+            const input = document.getElementById('new-decree-text');
+            if(!input.value.trim()) return;
+            const stardate = (8000 + Math.floor(Math.random() * 1000)).toString();
+            await fetch('/api/decrees', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: input.value, stardate })
+            });
+            input.value = '';
+            loadDecrees();
+        }
+
+        async function loadChat() {
+            const res = await fetch('/api/chat');
+            const messages = await res.json();
+            const chat = document.getElementById('chat-messages');
+            chat.innerHTML = '';
+            messages.forEach(msg => {
+                const item = document.createElement('div');
+                item.className = `chat-msg ${msg.sender === 'Командир' ? 'msg-user' : 'msg-system'}`;
+                item.innerHTML = `<div class="msg-sender">${msg.sender}</div>${msg.text}`;
+                chat.appendChild(item);
+            });
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            if(!input.value.trim()) return;
+            await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sender: 'Командир', text: input.value })
+            });
+            input.value = '';
+            loadChat();
+        }
+    </script>
+</body>
+</html>
