@@ -59,7 +59,9 @@ function sendTelegramMessage(text, regionKey) {
     const imageUrl = regionImages[regionKey] || regionImages.kyiv;
     
     // Додаємо красиве посилання на першоджерело
-    const fullText = `${text}\\n\\n📖 <a href="https://imperial-portal-210914528327.europe-west1.run.app"><b>Читать полные ИМПЄРСКІЄ ВЄДОМОСТІ</b></a>`;
+    const fullText = `${text}
+
+📖 <a href="https://imperial-portal-210914528327.europe-west1.run.app"><b>Читать полные ИМПЄРСКІЄ ВЄДОМОСТІ</b></a>`;
     
     // Створюємо інтерактивні кнопки реакцій під постом
     const replyMarkup = {
@@ -99,7 +101,9 @@ app.post('/api/telegram/broadcast', (req, res) => {
     const rKey = region_key || 'kyiv';
     const imageUrl = regionImages[rKey] || regionImages.kyiv;
     
-    const fullText = `${text}\\n\\n📖 <a href="https://imperial-portal-210914528327.europe-west1.run.app"><b>Читать полные ИМПЄРСКІЄ ВЄДОМОСТІ</b></a>`;
+    const fullText = `${text}
+
+📖 <a href="https://imperial-portal-210914528327.europe-west1.run.app"><b>Читать полные ИМПЄРСКІЄ ВЄДОМОСТІ</b></a>`;
     
     const replyMarkup = {
         inline_keyboard: [[
@@ -168,11 +172,29 @@ app.post('/api/scout/auto-execute', (req, res) => {
             let telegramPost = '';
             
             if (randomSpeaker === 'mazepa') {
-                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
+                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>
+
+<b>${data.title}</b>
+
+"${data.content}"
+
+${data.tags}`;
             } else if (randomSpeaker === 'werner') {
-                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
+                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>
+
+<b>${data.title}</b>
+
+"${data.content}"
+
+${data.tags}`;
             } else {
-                telegramPost = `🤡 <b>Глебов деконструкция:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
+                telegramPost = `🤡 <b>Глебов деконструкция:</b>
+
+<b>${data.title}</b>
+
+"${data.content}"
+
+${data.tags}`;
             }
             
             // Направляємо фото та текст відповідно до регіону!
