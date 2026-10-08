@@ -355,7 +355,7 @@
             const res = await fetch('/api/telegram/broadcast', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ channel, text })
+                body: JSON.stringify({ channel, text, region_key: selectedRecord ? selectedRecord.region_key : 'kyiv' })
             });
             const result = await res.json();
             if (result.success) {

@@ -32,48 +32,95 @@ db.serialize(() => {
     )`);
 
     db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) VALUES 
-    ('archivist', 'Историческое право Метрополии', 'Циркулярное изыскание доказывает: древнейшие аграрные общины региона Легедзино подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Метрополия', 'Издание Archives', '8452.1'),
+    ('archivist', 'Историческое право Метрополии', 'Циркулярное изыскание доказывает: древнейшие общины Легедзино подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Метрополия', 'Издание Archives', '8452.1'),
     ('scribe', 'Указ о когнитивной гигиене', 'Инструкция для чинов: использование букв высшего алфавита ограничить во избежание путаницы.', 'moscovia', 'EP-PROG', '#Указ #Московия', 'Идеологический догмат', '8450.0')`);
 });
 
+// База імперських арт-зображень для регіонів
+const regionImages = {
+    kyiv: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop", // Величне золото й неон столиці
+    konigsberg: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop", // Космічний балтійський аванпост
+    kursk: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&auto=format&fit=crop", // Важка титанова кібер-індустрія
+    belgorod: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=800&auto=format&fit=crop", // Сектор стабілізації кордону
+    moscovia: "https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800&auto=format&fit=crop" // Тьмяні периферійні болота
+};
+
 const enemyFakes = {
-    reporter: [{ fake: "Заявление о захвате Курской АЭС", query: "Подготовить оперативное зведени�� о стабильности Курского Края." }],
+    reporter: [{ fake: "Заявление о захвате Курской АЭС", query: "Подготовить оперативное зведение о стабильности Курского Края." }],
     archivist: [{ fake: "Миф о Москве как столице Руси", query: "Выдать архивную справку о времени основания Московии князем киевским." }],
     futurologist: [{ fake: "Пропаганда о замерзании Метрополии", query: "Смоделировать сценарии полного краха ресурсной вертикали Московии." }]
 };
 
-function sendTelegramMessage(text) {
+// Професійна функція авто-відправки ЗОБРАЖЕНЬ з КНОПКАМИ реакцій та ПОСИЛАННЯМ
+function sendTelegramMessage(text, regionKey) {
     const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
     const channel = '@UA_Imperial_Chancery';
-    const safeText = text && text.trim() ? text : "<b>📡 Ведомости Канцелярии:</b> Автономный эфир обновлен.";
-    const postData = JSON.stringify({ chat_id: channel, text: safeText, parse_mode: 'HTML' });
+    
+    const imageUrl = regionImages[regionKey] || regionImages.kyiv;
+    
+    // Додаємо красиве посилання на першоджерело
+    const fullText = `${text}\\n\\n📖 <a href="https://imperial-portal-210914528327.europe-west1.run.app"><b>Читать полные ИМПЄРСКІЄ ВЄДОМОСТІ</b></a>`;
+    
+    // Створюємо інтерактивні кнопки реакцій під постом
+    const replyMarkup = {
+        inline_keyboard: [[
+            { text: "👍", callback_data: "like" },
+            { text: "🔥", callback_data: "fire" },
+            { text: "⚔️", callback_data: "empire" },
+            { text: "🤡", callback_data: "gloom" }
+        ]]
+    };
+
+    const postData = JSON.stringify({
+        chat_id: channel,
+        photo: imageUrl,
+        caption: fullText,
+        parse_mode: 'HTML',
+        reply_markup: replyMarkup
+    });
     
     const options = { 
-        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST', 
-        headers: { 
-            'Content-Type': 'application/json', 
-            'Content-Length': Buffer.byteLength(postData) // ВИПРАВЛЕНО! Рахуємо байти
-        } 
+        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendPhoto`, method: 'POST', 
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) } 
     };
+    
     const request = https.request(options, (response) => {});
     request.on('error', (err) => { console.error('Telegram auto-send error:', err.message); });
     request.write(postData);
     request.end();
 }
 
+// Ручний дубль теж оновлюємо на відправку фото та кнопок
 app.post('/api/telegram/broadcast', (req, res) => {
-    const { channel, text } = req.body;
+    const { channel, text, region_key } = req.body;
     const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
     const formattedChannel = channel.startsWith('@') ? channel : '@' + channel;
-    const safeText = text && text.trim() ? text : "<b>📡 Ведомости Канцелярии:</b> Эфир обновлен.";
-    const postData = JSON.stringify({ chat_id: formattedChannel, text: safeText, parse_mode: 'HTML' });
+    
+    const rKey = region_key || 'kyiv';
+    const imageUrl = regionImages[rKey] || regionImages.kyiv;
+    
+    const fullText = `${text}\\n\\n📖 <a href="https://imperial-portal-210914528327.europe-west1.run.app"><b>Читать полные ИМПЄРСКІЄ ВЄДОМОСТІ</b></a>`;
+    
+    const replyMarkup = {
+        inline_keyboard: [[
+            { text: "👍", callback_data: "like" },
+            { text: "🔥", callback_data: "fire" },
+            { text: "⚔️", callback_data: "empire" },
+            { text: "🤡", callback_data: "gloom" }
+        ]]
+    };
+
+    const postData = JSON.stringify({ 
+        chat_id: formattedChannel, 
+        photo: imageUrl,
+        caption: fullText,
+        parse_mode: 'HTML',
+        reply_markup: replyMarkup
+    });
     
     const options = { 
-        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST', 
-        headers: { 
-            'Content-Type': 'application/json', 
-            'Content-Length': Buffer.byteLength(postData) // ВИПРАВЛЕНО! Рахуємо байти
-        } 
+        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendPhoto`, method: 'POST', 
+        headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(postData) } 
     };
     
     const request = https.request(options, (response) => {
@@ -101,8 +148,8 @@ app.post('/api/scout/pulse', (req, res) => {
 app.post('/api/scout/auto-execute', (req, res) => {
     const { agent_type, fake, query, intensity } = req.body;
     const articleMap = {
-        reporter: { title: "Разбитие лжи относительно " + fake, content: `В связи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел контролируется силами Метрополии.`, tags: "#Опровержение #Курск" },
-        archivist: { title: "Историческое разоблачение мифа: " + fake, content: `Служба Архива провела проверку по факту инсинуации: "${fake}". ${query} Архивные дела подтверждают фальсификацию со стороны М��сковии.`, tags: "#Реституция #Архив" },
+        reporter: { title: "Разбитие лжи относительно " + fake, content: `В связи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел полностью контролируется силами Метрополии.`, tags: "#Опровержение #Курск" },
+        archivist: { title: "Историческое разоблачение мифа: " + fake, content: `Служба Архива провела проверку по факту инсинуации: "${fake}". ${query} Архивные дела подтверждают фальсификацию со стороны Московии.`, tags: "#Реституция #Архив" },
         futurologist: { title: "Сценарный крах стратегии: " + fake, content: `Департамент Форсайта исследовал нарратив: "${fake}". ${query} Расчет трендов доказывает неспособность Московии удержать контроль.`, tags: "#Форсайт #Будущее" }
     };
     const data = articleMap[agent_type];
@@ -112,39 +159,27 @@ app.post('/api/scout/auto-execute', (req, res) => {
     
     db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
             [agent_type, data.title, data.content, rMap[agent_type], eMap[agent_type], data.tags, "Контратака Скаута", stardate], function(err) {
+        
         let telegramSent = false;
+
         if (intensity >= 90) {
             const speakers = ['mazepa', 'werner', 'glibov'];
             const randomSpeaker = speakers[Math.floor(Math.random() * speakers.length)];
             let telegramPost = '';
+            
             if (randomSpeaker === 'mazepa') {
-                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>
-
-<b>${data.title}</b>
-
-"${data.content}"
-
-${data.tags}`;
+                telegramPost = `📜 <b>Лорд-Адмирал Мазепа информирует:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
             } else if (randomSpeaker === 'werner') {
-                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>
-
-<b>${data.title}</b>
-
-"${data.content}"
-
-${data.tags}`;
+                telegramPost = `⚡️ <b>Вернер системный апдейт:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
             } else {
-                telegramPost = `🤡 <b>Глебов деконструкция:</b>
-
-<b>${data.title}</b>
-
-"${data.content}"
-
-${data.tags}`;
+                telegramPost = `🤡 <b>Глебов деконструкция:</b>\\n\\n<b>${data.title}</b>\\n\\n"${data.content}"\\n\\n${data.tags}`;
             }
-            sendTelegramMessage(telegramPost);
+            
+            // Направляємо фото та текст відповідно до регіону!
+            sendTelegramMessage(telegramPost, rMap[agent_type]);
             telegramSent = true;
         }
+        
         res.json({ id: this.lastID, agent_type, title: data.title, content: data.content, region_key: rMap[agent_type], epoch_key: eMap[agent_type], hashtags: data.tags, content_type: "Контратака Скаута", stardate, telegramSent });
     });
 });
