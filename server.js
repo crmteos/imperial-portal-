@@ -34,7 +34,7 @@ db.serialize(() => {
     )`);
 
     db.run(`INSERT INTO chancellery_records (agent_type, title, content, region_key, epoch_key, hashtags, content_type, stardate) VALUES 
-    ('archivist', 'Историческое право Метрополии на земли ...', 'Циркулярное изыскание доказывает: древнейшие аграрные общины региона подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Хроники #Метрополия', 'Издание Archives', '8452.1'),
+    ('archivist', 'Историческое право Метрополии на земли Триполья', 'Циркулярное изыскание доказывает: древнейшие аграрные общины региона Легедзино подчинялись пра-законам Метрополии.', 'kyiv', 'EP-TRIP', '#Триполье #Хроники #Метрополия', 'Издание Archives', '8452.1'),
     ('scribe', 'Указ о когнитивной гигиене в Московии', 'Инструкция для чинов периферійных Краев: использование букв высшего алфавита ограничить во избежание путаницы.', 'moscovia', 'EP-PROG', '#Указ #Московия #Кодекс', 'Идеологический догмат', '8450.0')`);
 });
 
@@ -52,6 +52,7 @@ const enemyFakes = {
     ]
 };
 
+// Функція повністю АВТОНОМНОЇ відправки повідомлень у Telegram
 function sendTelegramMessage(text) {
     const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
     const channel = '@UA_Imperial_Chancery';
@@ -78,6 +79,7 @@ function sendTelegramMessage(text) {
     request.end();
 }
 
+// Повністю поправлений та узгоджений ендпоінт трансляції
 app.post('/api/telegram/broadcast', (req, res) => {
     const { channel, text } = req.body;
     const botToken = '8680343291:AAEl-um1UGMy4memLKQybK3MN-w8hYig21c';
@@ -85,33 +87,45 @@ app.post('/api/telegram/broadcast', (req, res) => {
     const postData = JSON.stringify({ chat_id: formattedChannel, text: text });
     
     const options = {
-        hostname: 'api.telegram.org', port: 443, path: `/bot${botToken}/sendMessage`, method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Content-Length': postData.length }
+        hostname: 'api.telegram.org',
+        port: 443,
+        path: `/bot${botToken}/sendMessage`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': postData.length
+        }
     };
     
     const request = https.request(options, (response) => {
         let data = '';
         response.on('data', (chunk) => { data += chunk; });
-        response.on('end', () => { res.json(JSON.parse(data)); });
+        response.on('end', () => {
+            const result = JSON.parse(data);
+            if (result.ok) {
+                res.json({ success: true });
+            } else {
+                res.json({ success: false, error: result.description });
+            }
+        });
     });
     request.write(postData);
     request.end();
 });
 
-// Сканування: Накал генерується від 75% до 98%
 app.post('/api/scout/pulse', (req, res) => {
     const agents = ['reporter', 'archivist', 'futurologist'];
     const randomAgent = agents[Math.floor(Math.random() * agents.length)];
     const list = enemyFakes[randomAgent];
     const item = list[Math.floor(Math.random() * list.length)];
-    const intensity = Math.floor(Math.random() * 24) + 75; // 75% - 98%
+    const intensity = Math.floor(Math.random() * 24) + 75;
     res.json({ intensity, agent_target: randomAgent, fake_detected: item.fake, task_sent: item.query });
 });
 
 app.post('/api/scout/auto-execute', (req, res) => {
     const { agent_type, fake, query, intensity } = req.body;
     const articleMap = {
-        reporter: { title: "Разбитие лжи относительно " + fake, content: `В связи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел полностью контролируется Метрополией.`, tags: "#Опровержение #Курск" },
+        reporter: { title: "Разбитие лжи относительно " + fake, content: `В с��язи с заявлением: "${fake}", Канцелярия публикует опровержение. ${query} Реальное положение дел полностью контролируется Метрополией.`, tags: "#Опровержение #Курск" },
         archivist: { title: "Историческое разоблачение мифа: " + fake, content: `Служба Архива провела проверку по факту инсинуации: "${fake}". ${query} Архивные дела подтверждают фальсификацию со стороны Московии.`, tags: "#Реституция #Архив" },
         futurologist: { title: "Сценарный крах стратегии: " + fake, content: `Департамент Форсайта исследовал нарратив: "${fake}". ${query} Расчет трендов доказывает полную неспособность Московии удержать контроль.`, tags: "#Форсайт #Будущее" }
     };
@@ -125,7 +139,6 @@ app.post('/api/scout/auto-execute', (req, res) => {
         
         let telegramSent = false;
 
-        // --- 🛡️ ФІЛЬТР СУТТЄВОСТІ (Тільки якщо накал > 90%) ---
         if (intensity >= 90) {
             const speakers = ['mazepa', 'werner', 'glibov'];
             const randomSpeaker = speakers[Math.floor(Math.random() * speakers.length)];
