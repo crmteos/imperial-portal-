@@ -103,7 +103,7 @@ app.post('/api/chancellor/write', async (req, res) => {
         "X-OpenRouter-Title": "Imperial Portal Chancellor Node"
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3.1-8b-instruct:free",
+        model: "openrouter/free", // ТУТ ТЕПЕР АВТОМАТИЧНИЙ РОУТЕР БЕЗКОШТОВНИХ МОДЕЛЕЙ!
         messages: [
           {
             role: "system",
@@ -130,8 +130,8 @@ app.post('/api/chancellor/write', async (req, res) => {
       author: "Канцелярія Великого Канцлера"
     });
   } catch (error) {
-    console.error("Помилка - Канцлер не відповів:", error);
-    res.status(500).json({ error: `Канцлер не зміг завершити маніф��ст: ${error.message}` });
+    console.error("Помилка - - Канцлер не відповів:", error);
+    res.status(500).json({ error: `Канцлер не зміг завершити маніфест: ${error.message}` });
   }
 });
 
