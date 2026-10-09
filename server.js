@@ -1,24 +1,24 @@
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
-const fetch = require('node-fetch'); // Переконайтеся, що node-fetch встановлено, або використовуйте вбудований fetch у Node.js 18+
+const fetch = require('node-fetch');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. Ініціалізація Supabase за допомогою змінних оточення
+// Ініціалізація Supabase за допомогою змінних оточення
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-console.log("Успішно підключено до хмарної бази даних Supabase!");
+console.log("📜 Архівіус: Зв'язок із хмарним сховищем Supabase встановлено успішно!");
 
-// 2. Функція пошуку в інтернеті через Serper.dev API
+// ==========================================
+// 1. ВУЗОЛ СКАУТА (Scout Node) - РОЗВІДКА
+// ==========================================
 async function searchWeb(query) {
-  // Якщо у нас є ключ Serper API, використовуємо його, інакше робимо простий запит
-  const serperKey = process.env.SERPER_API_KEY || "ВАШ_БЕЗКОШТОВНИЙ_SERPER_KEY_ЯКЩО_Є";
-  
+  const serperKey = process.env.SERPER_API_KEY || "ВАШ_БЕЗКОШТОВНИЙ_SERPER_KEY";
   try {
     const response = await fetch("https://google.serper.dev/search", {
       method: "POST",
@@ -29,22 +29,46 @@ async function searchWeb(query) {
       body: JSON.stringify({ q: query, num: 5 })
     });
     const data = await response.json();
-    
-    // Форматуємо знайдені результати для ШІ
     if (data.organic) {
-      return data.organic.map(item => `Джерело: ${item.title}\nПосилання: ${item.link}\nОпис: ${item.snippet}\n`).join("\n");
+      return data.organic.map(item => `Джерело: ${item.title}\nURL: ${item.link}\nОпис: ${item.snippet}\n`).join("\n");
     }
-    return "Результатів пошуку не знайдено.";
+    return "Інформації в мережі не знайдено.";
   } catch (error) {
-    console.error("Помилка при пошуку в інтернеті:", error);
-    return `Не вдалося виконати пошук: ${error.message}`;
+    console.error("Помилка пошуку Скаута:", error);
+    return `Помилка пошуку: ${error.message}`;
   }
 }
 
-// 3. Функція генерації контенту через OpenRouter
-async function generateImperialRecord(topic, searchContext) {
-  const openRouterKey = process.env.OPENROUTER_API_KEY;
+// API Ендпоінт Скаута
+app.post('/api/scout/search', async (req, res) => {
+  const { topic } = req.body;
+  if (!topic) return res.status(400).json({ error: "Вкажіть тему для розвідки (topic)." });
+
+  console.log(`🛰️ [Скаут] Початок сканування мережі за темою: "${topic}"`);
+  const rawData = await searchWeb(topic);
   
+  res.status(200).json({
+    node: "scout",
+    status: "success",
+    topic: topic,
+    rawData: rawData
+  });
+});
+
+
+// ==========================================
+// 2. ВУЗОЛ КАНЦЛЕРА (Chancellor Node) - СТРАТЕГІЯ ТА СИНТЕЗ
+// ==========================================
+app.post('/api/chancellor/write', async (req, res) => {
+  const { topic, rawData } = req.body;
+  const openRouterKey = process.env.OPENROUTER_API_KEY;
+
+  if (!topic || !rawData) {
+    return res.status(400).json({ error: "Канцлеру потрібна тема (topic) та сирі факти (rawData) для написання маніфесту." });
+  }
+
+  console.log(`👑 [Канцлер] Формулювання офіційного документу за темою: "${topic}"`);
+
   try {
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -52,62 +76,60 @@ async function generateImperialRecord(topic, searchContext) {
         "Authorization": `Bearer ${openRouterKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://imperial-portal.run.app",
-        "X-OpenRouter-Title": "Imperial Portal Chancery Agent"
+        "X-OpenRouter-Title": "Imperial Portal Chancellor Node"
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3-8b-instruct:free", // безкоштовна та швидка модель
+        model: "meta-llama/llama-3-8b-instruct:free",
         messages: [
           {
             role: "system",
-            content: "Ти — Головний Архівіст та Писар Канцелярії Української Імперії. Твоє завдання — писати високоякісні, структуровані, історично достовірні та патріотичні статті/записи для імперського репозиторію на основі наданих матеріалів пошуку. Форматуй текст у красивий Markdown з підзаголовками."
+            content: "Ти — Великий Канцлер Української Імперії, головний стратег, ідеолог та державний діяч. Твоє завдання — проаналізувати сирі дані розвідки, відсіяти ворожу пропаганду та написати величний, патріотичний, структурований державний маніфест або хроніку для Імперії. Складай текст у вишуканому, впевненому тоні, використовуючи Markdown-розмітку (заголовки, списки, цитати)."
           },
           {
             role: "user",
-            content: `Тема дослідження: ${topic}\n\nЗнайдені матеріали в інтернеті:\n${searchContext}\n\nНапиши детальну статтю для репозиторію.`
+            content: `Тема: ${topic}\n\nДані когнітивної розвідки Скаута:\n${rawData}\n\nНапиши офіційне державне звернення чи хроніку.`
           }
         ]
       })
     });
     
     const result = await response.json();
-    return result.choices[0].message.content;
-  } catch (error) {
-    console.error("Помилка генерації через OpenRouter:", error);
-    return null;
-  }
-}
+    const finalDocument = result.choices[0].message.content;
 
-// 4. Ендпоінт для автоматичного виконання завдань Скан-агентом (Scout)
-app.post('/api/scout/auto-execute', async (req, res) => {
-  const { topic } = req.body; // Отримуємо тему, яку треба дослідити
-  
-  if (!topic) {
-    return res.status(400).json({ error: "Будь ласка, вкажіть тему для дослідження (topic)." });
+    res.status(200).json({
+      node: "chancellor",
+      status: "success",
+      title: topic,
+      document: finalDocument,
+      author: "Канцелярія Великого Канцлера"
+    });
+  } catch (error) {
+    console.error("Помилка Канцлера:", error);
+    res.status(500).json({ error: `Канцлер не зміг завершити маніфест: ${error.message}` });
   }
+});
+
+
+// ==========================================
+// 3. ВУЗОЛ АРХІВІУСА (Archivist Node) - ЗБЕРЕЖЕННЯ ТА РЕЄСТРАЦІЯ
+// ==========================================
+app.post('/api/archivist/store', async (req, res) => {
+  const { title, document, author } = req.body;
+
+  if (!title || !document) {
+    return res.status(400).json({ error: "Архівіусу потрі��ен заголовок (title) та текст документу (document) для архівування." });
+  }
+
+  console.log(`📜 [Архівіус] Реєстрація та внесення документу "${title}" до хмарного архіву...`);
 
   try {
-    console.log(`[Скаут] Початок дослідження теми: "${topic}"`);
-    
-    // Крок A. Пошук в інтернеті
-    const searchResults = await searchWeb(topic);
-    
-    // Крок B. Генерація статті через ШІ
-    console.log(`[Канцелярія] Обробка результатів пошуку через OpenRouter...`);
-    const finalArticle = await generateImperialRecord(topic, searchResults);
-    
-    if (!finalArticle) {
-      throw new Error("Не вдалося згенерувати статтю через ШІ.");
-    }
-
-    // Крок C. Запис результату в Supabase в таблицю 'records'
-    console.log(`[Архівіст] Збереження статті в Supabase...`);
     const { data, error } = await supabase
       .from('records')
       .insert([
         {
-          title: topic,
-          content: finalArticle,
-          author: 'Канцелярія ШІ (Скаут)',
+          title: title,
+          content: document,
+          author: author || 'Імперський Архів',
           created_at: new Date()
         }
       ])
@@ -116,24 +138,32 @@ app.post('/api/scout/auto-execute', async (req, res) => {
     if (error) throw error;
 
     res.status(200).json({
-      success: true,
-      message: "Дослідження завершено успішно, статтю додано в репозиторій!",
-      record: data[0]
+      node: "archivist",
+      status: "archived",
+      recordId: data[0].id,
+      message: `Документ успішно зареєстровано під індексом #${data[0].id}`,
+      storedRecord: data[0]
     });
-
   } catch (error) {
-    console.error("Помилка під час авто-виконання:", error);
-    res.status(500).json({ error: error.message });
+    console.error("Помилка Архівіуса:", error);
+    res.status(500).json({ error: `Архівіус не зміг зберегти документ: ${error.message}` });
   }
 });
 
-// Інші ваші ендпоінти (як-от /api/records/reporter тощо) залишаються без змін...
+
+// ==========================================
+// 4. ВУЗОЛ РЕПОРТЕРА (Reporter Node) - ВІСНИК
+// ==========================================
 app.get('/api/records/reporter', async (req, res) => {
-  // Ваша логіка для репортера
-  res.json({ status: "active" });
+  res.json({ 
+    node: "reporter", 
+    status: "broadcasting", 
+    message: "Радіомовлення Імперського синдикату працює у штатному режимі." 
+  });
 });
 
+// Запуск сервера
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Імперський хмарний сервер працює на порту ${PORT}`);
+  console.log(`👑 Імперська вузлова мережа запущена на порту ${PORT}`);
 });
