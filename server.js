@@ -7,35 +7,31 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ініціалізація Supabase за допомогою змінних оточення
+// Ініціалізація Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 console.log("📜 Архівіус: Зв'язок із хмарним сховищем Supabase встановлено успішно!");
 
 // ==========================================
-// 1. ВУЗОЛ СКАУТА (Scout Node) - РОЗВІДКА
+// 1. ВУЗОЛ СКАУТА (Scout Node) - РОЗВІДКА ЧЕРЕЗ GNEWS.IO
 // ==========================================
-async function searchWeb(query) {
-  const serperKey = process.env.SERPER_API_KEY || "ВАШ_БЕЗКОШТОВНИЙ_SERPER_KEY";
+async function searchWebGNews(query) {
+  const gnewsKey = process.env.GNEWS_API_KEY;
   try {
-    const response = await fetch("https://google.serper.dev/search", {
-      method: "POST",
-      headers: {
-        "X-API-KEY": serperKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ q: query, num: 5 })
-    });
+    // Шукаємо новини українською мовою за допомогою вашого ключа GNews
+    const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=uk&apikey=${gnewsKey}&max=5`;
+    const response = await fetch(url);
     const data = await response.json();
-    if (data.organic) {
-      return data.organic.map(item => `Джерело: ${item.title}\nURL: ${item.link}\nОпис: ${item.snippet}\n`).join("\n");
+    
+    if (data.articles && data.articles.length > 0) {
+      return data.articles.map(art => `Джерело: ${art.source.name}\nЗаголовок: ${art.title}\nПосилання: ${art.url}\nОпис: ${art.description}\n`).join("\n");
     }
-    return "Інформації в мережі не знайдено.";
+    return "Інформації в новинних стрічках не знайдено.";
   } catch (error) {
-    console.error("Помилка пошуку Скаута:", error);
-    return `Помилка пошуку: ${error.message}`;
+    console.error("Помилка пошуку Скаута через GNews:", error);
+    return `Помилка пошуку через GNews: ${error.message}`;
   }
 }
 
@@ -44,8 +40,8 @@ app.post('/api/scout/search', async (req, res) => {
   const { topic } = req.body;
   if (!topic) return res.status(400).json({ error: "Вкажіть тему для розвідки (topic)." });
 
-  console.log(`🛰️ [Скаут] Початок сканування мережі за темою: "${topic}"`);
-  const rawData = await searchWeb(topic);
+  console.log(`🛰️ [Скаут] Початок сканування GNews за темою: "${topic}"`);
+  const rawData = await searchWebGNews(topic);
   
   res.status(200).json({
     node: "scout",
@@ -117,7 +113,7 @@ app.post('/api/archivist/store', async (req, res) => {
   const { title, document, author } = req.body;
 
   if (!title || !document) {
-    return res.status(400).json({ error: "Архівіусу потрі��ен заголовок (title) та текст документу (document) для архівування." });
+    return res.status(400).json({ error: "Архівіусу потрібен заголовок (title) та текст документу (document) для архівування." });
   }
 
   console.log(`📜 [Архівіус] Реєстрація та внесення документу "${title}" до хмарного архіву...`);
@@ -165,5 +161,6 @@ app.get('/api/records/reporter', async (req, res) => {
 // Запуск сервера
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`👑 Імперська вузлова мережа запущена на порту ${PORT}`);
+    console.log(`👑 Імперська вузлова мережа успішно запущена на порту ${PORT}!`);
+    console.log(`🔗 Натисніть кнопку "Web Preview" у правому верхньому кутку Cloud Shell та оберіть порт ${PORT}, щоб відкрити Портал.`);
 });
