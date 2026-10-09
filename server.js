@@ -5,11 +5,9 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 app.use(cors());
 app.use(express.json());
-
-// ЦЕЙ РЯДОК ДОЗВОЛЯЄ СЕРВЕРУ ПОКАЗУВАТИ НАШІ СТОРІНКИ З ПАПКИ PUBLIC
 app.use(express.static('public'));
 
-// Ініціалізація Supabase за допомогою змінних оточення
+// Ініціалізація Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -17,22 +15,52 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 console.log("📜 Архівіус: Зв'язок із хмарним сховищем Supabase встановлено успішно!");
 
 // ==========================================
-// 1. ВУЗОЛ СКАУТА (Scout Node) - РОЗВІДКА ЧЕРЕЗ GNEWS.IO
+// ГІБРИДНА ФУНКЦІЯ ПОШУКУ (GNews з авто-переходом на Вікіпедію)
 // ==========================================
 async function searchWebGNews(query) {
   const gnewsKey = process.env.GNEWS_API_KEY;
+  
   try {
+    console.log(`🛰️ [Скаут] Спроба пошуку через GNews API...`);
     const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=uk&apikey=${gnewsKey}&max=5`;
     const response = await fetch(url);
     const data = await response.json();
     
+    // Якщо GNews видав помилку (наприклад, ліміти)
+    if (data.errors) {
+      console.log(`⚠️ [Скаут] Помилка GNews (ліміти вичерпано). Перемикаюся на Вікіпедію...`);
+      return await searchWikipedia(query);
+    }
+    
     if (data.articles && data.articles.length > 0) {
       return data.articles.map(art => `Джерело: ${art.source.name}\nЗаголовок: ${art.title}\nПосилання: ${art.url}\nОпис: ${art.description}\n`).join("\n");
     }
-    return "Інформації в новинних стрічках не знайдено.";
+    
+    return await searchWikipedia(query);
   } catch (error) {
-    console.error("Помилка пошуку Скаута через GNews:", error);
-    return `Помилка пошуку через GNews: ${error.message}`;
+    console.log(`⚠️ [Скаут] Збій GNews. Перемикаюся на Вікіпедію. Помилка: ${error.message}`);
+    return await searchWikipedia(query);
+  }
+}
+
+// ПЛАН Б: Вікіпедія
+async function searchWikipedia(query) {
+  try {
+    console.log(`📚 [Скаут-Архів] Пошук у Вікіпедії за запитом: "${query}"`);
+    const url = `https://uk.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json&origin=*`;
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.query && data.query.search && data.query.search.length > 0) {
+      return data.query.search.map(item => {
+        const cleanSnippet = item.snippet.replace(/<[^>]*>/g, '');
+        return `Джерело: Українська Вікіпедія\nЗаголовок: ${item.title}\nПосилання: https://uk.wikipedia.org/wiki/${encodeURIComponent(item.title)}\nОпис: ${cleanSnippet}...\n`;
+      }).join("\n");
+    }
+    return "На жаль, інформації не знайдено ні в новинах, ні у Вікіпедії.";
+  } catch (error) {
+    console.error("Помилка пошуку у Вікіпедії:", error);
+    return `Не вдалося виконати пошук навіть у Вікіпедії: ${error.message}`;
   }
 }
 
@@ -41,7 +69,7 @@ app.post('/api/scout/search', async (req, res) => {
   const { topic } = req.body;
   if (!topic) return res.status(400).json({ error: "Вкажіть тему для розвідки (topic)." });
 
-  console.log(`🛰️ [Скаут] Початок сканування GNews за темою: "${topic}"`);
+  console.log(`🛰️ [Скаут] Початок сканування мережі за темою: "${topic}"`);
   const rawData = await searchWebGNews(topic);
   
   res.status(200).json({
