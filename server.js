@@ -26,9 +26,8 @@ async function searchWebGNews(query) {
     const response = await fetch(url);
     const data = await response.json();
     
-    // Якщо GNews видав помилку (наприклад, ліміти)
     if (data.errors) {
-      console.log(`⚠️ [Скаут] Помилка GNews (можливо ліміти). Перемикаюся на ПЛАН Б: Вікіпедія...`);
+      console.log(`⚠️ [Скаут] Помилка GNews (ліміти вичерпано). Перемикаюся на Вікіпедію...`);
       return await searchWikipedia(query);
     }
     
@@ -36,7 +35,6 @@ async function searchWebGNews(query) {
       return data.articles.map(art => `Джерело: ${art.source.name}\nЗаголовок: ${art.title}\nПосилання: ${art.url}\nОпис: ${art.description}\n`).join("\n");
     }
     
-    // Якщо статті порожні, теж спробуємо Вікіпедію
     return await searchWikipedia(query);
   } catch (error) {
     console.log(`⚠️ [Скаут] Збій GNews. Перемикаюся на Вікіпедію. Помилка: ${error.message}`);
@@ -44,7 +42,7 @@ async function searchWebGNews(query) {
   }
 }
 
-// ПЛАН Б: Безкоштовний безлімітний пошук у Вікіпедії
+// ПЛАН Б: Вікіпедія
 async function searchWikipedia(query) {
   try {
     console.log(`📚 [Скаут-Архів] Пошук у Вікіпедії за запитом: "${query}"`);
@@ -54,7 +52,6 @@ async function searchWikipedia(query) {
     
     if (data.query && data.query.search && data.query.search.length > 0) {
       return data.query.search.map(item => {
-        // Очищаємо HTML теги з уривку тексту Вікіпедії
         const cleanSnippet = item.snippet.replace(/<[^>]*>/g, '');
         return `Джерело: Українська Вікіпедія\nЗаголовок: ${item.title}\nПосилання: https://uk.wikipedia.org/wiki/${encodeURIComponent(item.title)}\nОпис: ${cleanSnippet}...\n`;
       }).join("\n");
@@ -106,11 +103,11 @@ app.post('/api/chancellor/write', async (req, res) => {
         "X-OpenRouter-Title": "Imperial Portal Chancellor Node"
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3-8b-instruct:free",
+        model: "meta-llama/llama-3.1-8b-instruct:free",
         messages: [
           {
             role: "system",
-            content: "Ти — Великий Канцлер Української Імперії, головний стратег, ідеолог та державний діяч. Твоє завдання — проаналізувати сирі дані розвідки, відсіяти ворожу пропаганду та написати величний, патріотичний, структурований державний маніфест або хроніку для Імперії. Складай те��ст у вишуканому, впевненому тоні, використовуючи Markdown-розмітку (заголовки, списки, цитати)."
+            content: "Ти — Великий Канцлер Української Імперії, головний стратег, ідеолог та державний діяч. Твоє завдання — проаналізувати сирі дані розвідки, відсіяти ворожу пропаганду та написати величний, патріотичний, структурований державний маніфест або хроніку для Імперії. Складай текст у вишуканому, впевненому тоні, використовуючи Markdown-розмітку (заголовки, списки, цитати)."
           },
           {
             role: "user",
@@ -121,6 +118,8 @@ app.post('/api/chancellor/write', async (req, res) => {
     });
     
     const result = await response.json();
+    console.log("🔍 [DEBUG] Відповідь від OpenRouter API:", JSON.stringify(result));
+    
     const finalDocument = result.choices[0].message.content;
 
     res.status(200).json({
@@ -132,7 +131,7 @@ app.post('/api/chancellor/write', async (req, res) => {
     });
   } catch (error) {
     console.error("Помилка - Канцлер не відповів:", error);
-    res.status(500).json({ error: `Канцлер не зміг завершити маніфест: ${error.message}` });
+    res.status(500).json({ error: `Канцлер не зміг завершити маніф��ст: ${error.message}` });
   }
 });
 
