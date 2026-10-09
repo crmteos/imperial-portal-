@@ -7,7 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ініціалізація Supabase
+// ЦЕЙ РЯДОК ДОЗВОЛЯЄ СЕРВЕРУ ПОКАЗУВАТИ НАШІ СТОРІНКИ З ПАПКИ PUBLIC
+app.use(express.static('public'));
+
+// Ініціалізація Supabase за допомогою змінних оточення
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
@@ -20,7 +23,6 @@ console.log("📜 Архівіус: Зв'язок із хмарним схови
 async function searchWebGNews(query) {
   const gnewsKey = process.env.GNEWS_API_KEY;
   try {
-    // Шукаємо новини українською мовою за допомогою вашого ключа GNews
     const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=uk&apikey=${gnewsKey}&max=5`;
     const response = await fetch(url);
     const data = await response.json();
@@ -100,7 +102,7 @@ app.post('/api/chancellor/write', async (req, res) => {
       author: "Канцелярія Великого Канцлера"
     });
   } catch (error) {
-    console.error("Помилка Канцлера:", error);
+    console.error("Помилка - Канцлер не відповів:", error);
     res.status(500).json({ error: `Канцлер не зміг завершити маніфест: ${error.message}` });
   }
 });
@@ -162,5 +164,4 @@ app.get('/api/records/reporter', async (req, res) => {
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`👑 Імперська вузлова мережа успішно запущена на порту ${PORT}!`);
-    console.log(`🔗 Натисніть кнопку "Web Preview" у правому верхньому кутку Cloud Shell та оберіть порт ${PORT}, щоб відкрити Портал.`);
 });
