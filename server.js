@@ -28,7 +28,7 @@ async function searchWebGNews(query) {
     
     // Якщо GNews видав помилку (наприклад, ліміти)
     if (data.errors) {
-      console.log(`⚠️ [Скаут] Помилка GNews (ліміти вичерпано). Перемикаюся на Вікіпедію...`);
+      console.log(`⚠️ [Скаут] Помилка GNews (можливо ліміти). Перемикаюся на ПЛАН Б: Вікіпедія...`);
       return await searchWikipedia(query);
     }
     
@@ -36,6 +36,7 @@ async function searchWebGNews(query) {
       return data.articles.map(art => `Джерело: ${art.source.name}\nЗаголовок: ${art.title}\nПосилання: ${art.url}\nОпис: ${art.description}\n`).join("\n");
     }
     
+    // Якщо статті порожні, теж спробуємо Вікіпедію
     return await searchWikipedia(query);
   } catch (error) {
     console.log(`⚠️ [Скаут] Збій GNews. Перемикаюся на Вікіпедію. Помилка: ${error.message}`);
@@ -43,7 +44,7 @@ async function searchWebGNews(query) {
   }
 }
 
-// ПЛАН Б: Вікіпедія
+// ПЛАН Б: Безкоштовний безлімітний пошук у Вікіпедії
 async function searchWikipedia(query) {
   try {
     console.log(`📚 [Скаут-Архів] Пошук у Вікіпедії за запитом: "${query}"`);
@@ -53,6 +54,7 @@ async function searchWikipedia(query) {
     
     if (data.query && data.query.search && data.query.search.length > 0) {
       return data.query.search.map(item => {
+        // Очищаємо HTML теги з уривку тексту Вікіпедії
         const cleanSnippet = item.snippet.replace(/<[^>]*>/g, '');
         return `Джерело: Українська Вікіпедія\nЗаголовок: ${item.title}\nПосилання: https://uk.wikipedia.org/wiki/${encodeURIComponent(item.title)}\nОпис: ${cleanSnippet}...\n`;
       }).join("\n");
@@ -108,7 +110,7 @@ app.post('/api/chancellor/write', async (req, res) => {
         messages: [
           {
             role: "system",
-            content: "Ти — Великий Канцлер Української Імперії, головний стратег, ідеолог та державний діяч. Твоє завдання — проаналізувати сирі дані розвідки, відсіяти ворожу пропаганду та написати величний, патріотичний, структурований державний маніфест або хроніку для Імперії. Складай текст у вишуканому, впевненому тоні, використовуючи Markdown-розмітку (заголовки, списки, цитати)."
+            content: "Ти — Великий Канцлер Української Імперії, головний стратег, ідеолог та державний діяч. Твоє завдання — проаналізувати сирі дані розвідки, відсіяти ворожу пропаганду та написати величний, патріотичний, структурований державний маніфест або хроніку для Імперії. Складай те��ст у вишуканому, впевненому тоні, використовуючи Markdown-розмітку (заголовки, списки, цитати)."
           },
           {
             role: "user",
