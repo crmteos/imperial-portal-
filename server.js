@@ -233,8 +233,7 @@ app.get('/api/records/reporter', async (req, res) => {
   });
 });
 
-// Запуск сервера
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log(`👑 Імперська вузлова мережа успішно запущена на порту ${PORT}!`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`👑 Імперська вузлова мережа успішно запущена на порту ${PORT} (хост 0.0.0.0)!`);
 });
