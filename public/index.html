@@ -15,7 +15,7 @@
         <nav>
             <a href="index.html" class="active">Головна</a>
             <a href="vagon.html">🚃 Вагон дослідників</a>
-            <a href="archive.html">📁 Архівіус</a>
+            <a href="archive.html">📁 Архіваріус</a>
             <a href="admin.html">⚙️ Адмінпанель</a>
         </nav>
     </header>
@@ -23,14 +23,14 @@
     <main>
         <section class="welcome-box">
             <h2>Ласкаво просимо до Імперського Порталу</h2>
-            <p>Цей портал координує роботу державних інформаційних вузлів та агентів під егідою Великої Канцелярії.</p>
+            <p>Медійний портал Української імперії координує роботу інформаційних вузлів та агентів під егідою Канцелярії.</p>
         </section>
 
         <section class="agents-grid">
             <!-- КАНЦЕЛЯРІЯ -->
             <div class="agent-card">
                 <h3>🏛️ Канцелярія</h3>
-                <p>Аналізує дані розвідки, формує офіційні державні маніфести та хроніки.</p>
+                <p>Аналізує дані розвідки, формує офіційні імперські маніфести та хроніки.</p>
                 <span class="status-badge online">Активна</span>
             </div>
 
@@ -44,14 +44,14 @@
             <!-- АРХІВАРІУС -->
             <div class="agent-card">
                 <h3>📁 Архіваріус</h3>
-                <p>Надійно реєструє та зберігає державні документи в хмарному сховищі Supabase.</p>
+                <p>Надійно реєструє та зберігає імперські документи в хмарному сховищі Supabase.</p>
                 <a href="archive.html" class="btn">Переглянути Архів</a>
             </div>
 
             <!-- НОВИНАРЬ -->
             <div class="agent-card">
                 <h3>📰 Новинарь</h3>
-                <p>Формує оперативні зведення та інтегрує стрічку новин з державними архівами.</p>
+                <p>Формує оперативні зведення та інтегрує стрічку новин з імперськими архівами.</p>
                 <button id="load-news-btn" class="btn">Читати зведення</button>
             </div>
         </section>
@@ -71,7 +71,6 @@
 
     <script src="app.js"></script>
     <script>
-        // Простий обробник для швидкого показу новин Новинаря на головній
         document.getElementById('load-news-btn').addEventListener('click', async () => {
             const newsSection = document.getElementById('news-section');
             const newsList = document.getElementById('news-list');

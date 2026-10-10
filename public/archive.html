@@ -3,42 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Державний Архів - Архівіус</title>
+    <title>📁 Імперський Архів - Архіваріус</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="imperial-header">
-        <div class="logo">👑 ІМПЕРСЬКИЙ ПОРТАЛ</div>
-        <nav class="navigation">
-            <a href="index.html">Головний Штаб</a>
-            <a href="scout.html">🛰️ Ситуаційний Центр</a>
-            <a href="archive.html" class="active">📜 Державний Архів</a>
+    <header>
+        <div class="header-container">
+            <h1>📁 Архіваріус</h1>
+            <p class="subtitle">Імперський хмарний реєстр та архів Supabase</p>
+        </div>
+        <nav>
+            <a href="index.html">Головна</a>
+            <a href="vagon.html">🚃 Вагон дослідників</a>
+            <a href="archive.html" class="active">📁 Архіваріус</a>
+            <a href="admin.html">⚙️ Адмінпанель</a>
         </nav>
     </header>
 
-    <main class="container">
-        <div class="workspace-card">
-            <h2>📜 Вузол Архівіуса: Репозиторій Державних Хронік</h2>
-            <p>Останні зареєстровані та збережені документи в системі Supabase.</p>
-            
-            <div id="archivist-status-message" class="info-alert" style="display:none;"></div>
-            
-            <div class="archive-list" id="archive-container">
-                <p style="text-align: center; color: #a1a1aa;">Архівні записи завантажуються з бази даних...</p>
-            </div>
-        </div>
+    <main>
+        <section class="welcome-box">
+            <h2>📁 Офіційні імперські документи</h2>
+            <p>Усі успішно зареєстровані хроніки, маніфести та звіти, збережені в хмарі.</p>
+        </section>
+
+        <section id="archive-list" class="archive-list">
+            <p>Завантаження імперських архівів...</p>
+        </section>
     </main>
 
+    <footer>
+        <p>&copy; 2024 Ukrainian Empire Portal. Всі права захищено Канцелярією.</p>
+    </footer>
+
     <script>
-        // Простий скрипт для завантаження записів (якщо є ендпоінт)
-        // Для демонстрації, якщо база пуста, покажемо статус
-        const statusMsg = localStorage.getItem('last_archived');
-        if (statusMsg) {
-            const alertBox = document.getElementById('archivist-status-message');
-            alertBox.style.display = 'block';
-            alertBox.innerText = statusMsg;
-            localStorage.removeItem('last_archived');
-        }
+        document.addEventListener('DOMContentLoaded', async () => {
+            const archiveList = document.getElementById('archive-list');
+            try {
+                const response = await fetch('/api/novynar/news');
+                const data = await response.json();
+                
+                archiveList.innerHTML = '';
+                if(data.news && data.news.length > 0) {
+                    data.news.forEach(item => {
+                        const date = new Date(item.created_at).toLocaleString('uk-UA');
+                        archiveList.innerHTML += `
+                            <div class="archive-card" style="background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                <h3>📜 ${item.title}</h3>
+                                <p style="color: #666; font-size: 0.9em;"><strong>Автор:</strong> ${item.author} | <strong>Дата реєстрації:</strong> ${date}</p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    archiveList.innerHTML = '<p>В імперському архіві поки немає записів.</p>';
+                }
+            } catch (err) {
+                archiveList.innerHTML = '<p class="error">Помилка зв\'язку з Архіваріусом.</p>';
+            }
+        });
     </script>
 </body>
 </html>
