@@ -1,15 +1,16 @@
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
+require('dotenv').config(); // Зчитуємо .env
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Ініціалізація Supabase
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_ANON_KEY;
+// Ініціалізація Supabase (з жорсткими резервними значеннями на випадок порожнього env)
+const supabaseUrl = process.env.SUPABASE_URL || "https://cjjfdoclrsjswmfsawiz.supabase.co";
+const supabaseServiceKey = process.env.SUPABASE_ANON_KEY || "5Ct0x2fOeW1ohVA0";
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 console.log("📜 [Архіваріус]: Зв'язок із хмарним сховищем Supabase встановлено успішно!");
