@@ -3,54 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Імперський Портал - Головний Штаб</title>
+    <title>Imperial Portal - Головна</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="imperial-header">
-        <div class="logo">👑 ІМПЕРСЬКИЙ ПОРТАЛ</div>
-        <nav class="navigation">
-            <a href="index.html" class="active">Головний Штаб</a>
-            <a href="scout.html">🛰️ Ситуаційний Центр</a>
-            <a href="archive.html">📜 Державний Архів</a>
+    <header>
+        <div class="header-container">
+            <h1>👑 Imperial Portal</h1>
+            <p class="subtitle">Мультиагентна мережа управління Української Імперії</p>
+        </div>
+        <nav>
+            <a href="index.html" class="active">Головна</a>
+            <a href="vagon.html">🚃 Вагон дослідників</a>
+            <a href="archive.html">📁 Архівіус</a>
+            <a href="admin.html">⚙️ Адмінпанель</a>
         </nav>
     </header>
 
-    <main class="container">
-        <div class="welcome-banner">
-            <h1>Головний Штаб Управління</h1>
-            <p>Вітаємо в операційній системі керування ШІ-вузлами Української Імперії.</p>
-        </div>
+    <main>
+        <section class="welcome-box">
+            <h2>Ласкаво просимо до Імперського Порталу</h2>
+            <p>Цей портал координує роботу державних інформаційних вузлів та агентів під егідою Великої Канцелярії.</p>
+        </section>
 
-        <h2 class="section-title">Мережа Активних Вузлів (Nodes)</h2>
-        <div class="nodes-grid">
-            <!-- Scout Node -->
-            <div class="node-card">
-                <div class="node-status active">онлайн</div>
-                <div class="node-icon">🛰️</div>
-                <h3>Скаут</h3>
-                <p>Когнітивна розвідка, парсинг ворожих наративів та пошук сирих фактів в інтернеті.</p>
-                <a href="scout.html" class="btn">Перейти до розвідки</a>
+        <section class="agents-grid">
+            <!-- КАНЦЕЛЯРІЯ -->
+            <div class="agent-card">
+                <h3>🏛️ Канцелярія</h3>
+                <p>Аналізує дані розвідки, формує офіційні державні маніфести та хроніки.</p>
+                <span class="status-badge online">Активна</span>
             </div>
 
-            <!-- Chancellor Node -->
-            <div class="node-card">
-                <div class="node-status active">онлайн</div>
-                <div class="node-icon">👑</div>
-                <h3>Канцлер</h3>
-                <p>Аналіз, стратегічне планування та написання величних маніфестів і державних хронік.</p>
-                <span class="node-info">Активується через розвідку</span>
+            <!-- ВАГОН ДОСЛІДНИКІВ -->
+            <div class="agent-card">
+                <h3>🚃 Вагон дослідників</h3>
+                <p>Здійснює когнітивну розвідку, збирає оперативну інформацію та факти з мережі.</p>
+                <a href="vagon.html" class="btn">Запустити розвідку</a>
             </div>
 
-            <!-- Archivist Node -->
-            <div class="node-card">
-                <div class="node-status active">онлайн</div>
-                <div class="node-icon">📜</div>
-                <h3>Архівіус</h3>
-                <p>Систематизація знань, реєстрація документів та запис в базу даних Supabase.</p>
-                <a href="archive.html" class="btn secondary">Відкрити архіви</a>
+            <!-- АРХІВАРІУС -->
+            <div class="agent-card">
+                <h3>📁 Архіваріус</h3>
+                <p>Надійно реєструє та зберігає державні документи в хмарному сховищі Supabase.</p>
+                <a href="archive.html" class="btn">Переглянути Архів</a>
             </div>
-        </div>
+
+            <!-- НОВИНАРЬ -->
+            <div class="agent-card">
+                <h3>📰 Новинарь</h3>
+                <p>Формує оперативні зведення та інтегрує стрічку новин з державними архівами.</p>
+                <button id="load-news-btn" class="btn">Читати зведення</button>
+            </div>
+        </section>
+
+        <!-- Віджет Новинаря -->
+        <section id="news-section" class="news-container" style="display:none; margin-top: 20px;">
+            <h3>📰 Останні новини та події</h3>
+            <div id="news-list" class="news-list">
+                <!-- Сюди завантажуватимуться новини -->
+            </div>
+        </section>
     </main>
+
+    <footer>
+        <p>&copy; 2024 Ukrainian Empire Portal. Всі права захищено Канцелярією.</p>
+    </footer>
+
+    <script src="app.js"></script>
+    <script>
+        // Простий обробник для швидкого показу новин Новинаря на головній
+        document.getElementById('load-news-btn').addEventListener('click', async () => {
+            const newsSection = document.getElementById('news-section');
+            const newsList = document.getElementById('news-list');
+            newsSection.style.display = 'block';
+            newsList.innerHTML = '<p>Завантаження стрічки новин...</p>';
+            
+            try {
+                const response = await fetch('/api/novynar/news');
+                const data = await response.json();
+                
+                newsList.innerHTML = '';
+                if(data.news && data.news.length > 0) {
+                    data.news.forEach(item => {
+                        const date = new Date(item.created_at).toLocaleString('uk-UA');
+                        newsList.innerHTML += `
+                            <div class="news-item">
+                                <h4>${item.title}</h4>
+                                <small>Автор: ${item.author} | Дата: ${date}</small>
+                            </div>
+                        `;
+                    });
+                } else {
+                    newsList.innerHTML = '<p>Немає активних новин на цей момент.</p>';
+                }
+            } catch (err) {
+                newsList.innerHTML = '<p class="error">Помилка завантаження новин.</p>';
+            }
+        });
+    </script>
 </body>
 </html>

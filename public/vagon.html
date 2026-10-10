@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚃 Вагон дослідників - Розвідка</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1>🚃 Вагон дослідників</h1>
+            <p class="subtitle">Інформаційна розвідка та когнітивне сканування</p>
+        </div>
+        <nav>
+            <a href="index.html">Головна</a>
+            <a href="vagon.html" class="active">🚃 Вагон дослідників</a>
+            <a href="archive.html">📁 Архівіус</a>
+            <a href="admin.html">⚙️ Адмінпанель</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="vagon-box">
+            <h2>Запустити збір даних з мережі</h2>
+            <p>Введіть тему, яка вас цікавить. Вагон дослідників здійснить сканування світових новин (GNews API) та Вікіпедії, після чого сформує оперативний звіт для Канцелярії.</p>
+            
+            <div class="search-form">
+                <input type="text" id="vagon-topic" placeholder="Наприклад: Технологічний розвиток України, Космічна програма...">
+                <button id="vagon-search-btn" class="btn-large">Запустити сканування</button>
+            </div>
+        </section>
+
+        <!-- Секція результату розвідки -->
+        <section id="vagon-results" class="results-box" style="display: none;">
+            <h3>📊 Зібрані сирі дані розвідки:</h3>
+            <pre id="vagon-raw-data" class="raw-data-display"></pre>
+            
+            <hr>
+            <h3>🏛️ Передати до Канцелярії:</h3>
+            <p>Надіслати ці дані Великому Канцлеру для створення офіційного Маніфесту.</p>
+            <button id="send-to-chancellor-btn" class="btn-success">Надіслати до Канцелярії</button>
+        </section>
+
+        <!-- Секція Маніфесту від Канцелярії -->
+        <section id="chancellor-document" class="results-box" style="display: none; background-color: #f4f6f9; border-left: 5px solid #d4af37;">
+            <h3 style="color: #c99300;">👑 Державний Маніфест Канцелярії:</h3>
+            <div id="manifest-content" class="manifest-content"></div>
+            
+            <hr>
+            <h3>📁 Зберегти до архіву Supabase:</h3>
+            <button id="save-to-archive-btn" class="btn-archive">Зареєструвати в Архівіуса</button>
+        </section>
+        
+        <div id="loading" class="loading" style="display: none;">⚙️ Робота триває, зачекайте...</div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Ukrainian Empire Portal. Всі права захищено Канцелярією.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
